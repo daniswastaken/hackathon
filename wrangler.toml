@@ -1,10 +1,16 @@
 name = "mbg-rescue-network"
 compatibility_date = "2026-05-22"
 
-[assets]
-directory = "dist"
+type = "javascript"
+
+[site]
+  bucket = "dist"
 
 [[d1_databases]]
-binding = "DB"
-database_name = "mbg"
-database_id = "6f43e123-8e1b-4eb3-b956-0f1e84e46bdf"
+  binding = "DB"
+  database_name = "mbg"
+  database_id = "6f43e123-8e1b-4eb3-b956-0f1e84e46bdf"
+
+[[routes]]
+  pattern = "/*"
+  script = "worker"
