@@ -1,7 +1,3 @@
-import type { APIRoute } from 'astro';
-
-export const get: APIRoute = function get(/* { params, request } */) {
-	const icon = /* html */ `
 <svg width="93" height="93" viewBox="0 0 93 93" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M91 31.9459H60.8447V2H31.9459C31.9459 18.5435 18.5435 31.9459 2 31.9459V60.8447H31.9459V90.7906H60.8447C60.8447 74.2471 74.4565 60.8447 91 60.8447V31.9459Z" fill="url(#paint0_linear_218_2)"/>
 <defs>
@@ -11,12 +7,3 @@ export const get: APIRoute = function get(/* { params, request } */) {
 </linearGradient>
 </defs>
 </svg>
-`;
-
-	return {
-		body: icon,
-		headers: {
-			'Content-Type': 'image/svg+xml',
-		},
-	};
-};

@@ -1,0 +1,71 @@
+---
+import LayoutSidebar from '../../app/LayoutSidebar.astro';
+
+const availableFood = [
+	{
+		school: "SDN 01 Menteng",
+		type: "Nasi Kuning & Telur Balado",
+		quantity: "15 portions",
+		deadline: "14:30 PM",
+		location: "Canteen Area",
+		status: "Available"
+	},
+	{
+		school: "SMPN 12 Jakarta",
+		type: "Vegetable Soup & Rice",
+		quantity: "25 portions",
+		deadline: "15:00 PM",
+		location: "Front Gate",
+		status: "Available"
+	},
+	{
+		school: "SMKN 57 Jakarta",
+		type: "Chicken Soto",
+		quantity: "10 portions",
+		deadline: "14:00 PM",
+		location: "Gate 2",
+		status: "Claimed"
+	}
+];
+---
+
+<LayoutSidebar>
+	<div class="px-4 pt-6">
+		<div class="mb-4">
+			<h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Live Food Rescue Feed</h1>
+			<p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">Real-time availability of MBG surplus food in your area.</p>
+		</div>
+
+		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+			{availableFood.map((item) => (
+				<div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800">
+					<div class="flex items-center justify-between mb-2">
+						<span class={`text-xs font-medium px-2.5 py-0.5 rounded ${item.status === 'Available' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'}`}>
+							{item.status}
+						</span>
+						<span class="text-sm font-normal text-gray-500 dark:text-gray-400">Deadline: {item.deadline}</span>
+					</div>
+					<h3 class="text-lg font-bold text-gray-900 dark:text-white">{item.school}</h3>
+					<p class="text-sm font-medium text-primary-600 dark:text-primary-500 mb-2">{item.type}</p>
+					
+					<div class="space-y-2 mb-4">
+						<div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+							<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+							{item.quantity}
+						</div>
+						<div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+							<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+							{item.location}
+						</div>
+					</div>
+
+					{item.status === 'Available' && (
+						<button class="w-full text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+							Reserve for Pickup
+						</button>
+					)}
+				</div>
+			))}
+		</div>
+	</div>
+</LayoutSidebar>

@@ -24,6 +24,19 @@ module.exports = {
 					800: '#1e40af',
 					900: '#1e3a8a',
 				},
+				gray: {
+					50: '#f9fafb',
+					100: '#f3f4f6',
+					200: '#e5e7eb',
+					300: '#d1d5db',
+					400: '#9ca3af',
+					500: '#6b7280',
+					600: '#4b5563',
+					700: '#2b2d31', // Discord Border
+					800: '#1e1f22', // Discord Surface
+					900: '#111214', // Discord Sidebar/Header
+					950: '#000000', // Discord Midnight/AMOLED
+				},
 			},
 			fontFamily: {
 				sans: [

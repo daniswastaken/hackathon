@@ -59,14 +59,14 @@ const getMainChartOptions = () => {
 		},
 		series: [
 			{
-				name: 'Revenue',
+				name: 'Consumable',
 				data: [6356, 6218, 6156, 6526, 6356, 6256, 6056],
-				color: '#1A56DB',
+				color: '#10B981',
 			},
 			{
-				name: 'Revenue (previous period)',
-				data: [6556, 6725, 6424, 6356, 6586, 6756, 6616],
-				color: '#FDBA8C',
+				name: 'Farm/Fertilizer',
+				data: [2556, 2725, 2424, 2356, 2586, 2756, 2616],
+				color: '#F59E0B',
 			},
 		],
 		markers: {
@@ -118,7 +118,7 @@ const getMainChartOptions = () => {
 					fontWeight: 500,
 				},
 				formatter(value) {
-					return `$${value}`;
+					return `${value} portions`;
 				},
 			},
 		},

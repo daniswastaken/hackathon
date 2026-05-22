@@ -1,0 +1,160 @@
+---
+import LayoutSidebar from '../../app/LayoutSidebar.astro';
+---
+
+<LayoutSidebar>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+	
+	<div class="px-4 pt-6 pb-12">
+		<div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+			<!-- Card header -->
+			<div class="items-center justify-between lg:flex border-b border-gray-200 dark:border-gray-700 pb-4 mb-6">
+				<div class="mb-4 lg:mb-0">
+					<h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">Post Available MBG Food</h3>
+					<span class="text-base font-normal text-gray-500 dark:text-gray-400">Notify volunteers and people in need about surplus food at your school.</span>
+				</div>
+			</div>
+			
+			<form class="space-y-6">
+				<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+					<div class="space-y-4">
+						<div>
+							<label for="food_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Food Type</label>
+							<input type="text" id="food_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="e.g. Nasi Kuning, Side Dishes" required>
+						</div>
+						<div class="grid grid-cols-2 gap-4">
+							<div>
+								<label for="quantity" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity (Portions)</label>
+								<input type="number" id="quantity" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="20" required>
+							</div>
+							<div>
+								<label for="pickup_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pickup Deadline</label>
+								<input type="time" id="pickup_time" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+							</div>
+						</div>
+						<div>
+							<label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Intended Use / Category</label>
+							<select id="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+								<option value="consumption">Human Consumption (Safe to Eat)</option>
+								<option value="farm">Farm Feed / Bio-fertilizer (Waste)</option>
+							</select>
+						</div>
+						<div>
+							<label for="location_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pickup Point (Specific Area)</label>
+							<input type="text" id="location_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="e.g. Front Gate / Canteen" required>
+						</div>
+					</div>
+
+					<div class="space-y-4 h-full flex flex-col">
+						<label class="block text-sm font-medium text-gray-900 dark:text-white">Pin Location on Map</label>
+						<div id="map" class="w-full h-64 md:h-96 rounded-lg border border-gray-300 dark:border-gray-600 z-0 shadow-sm"></div>
+						<div class="flex justify-end">
+							<button type="button" id="locate-me" class="inline-flex items-center px-3 py-2 text-xs font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+								<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"></path></svg>
+								Use My Location
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+					<div>
+						<label for="full_address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Full Street Address (Auto-filled)</label>
+						<textarea id="full_address" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Pin a location to fill address..." required></textarea>
+						<p id="geocoding-status" class="mt-2 text-xs font-medium text-gray-500 dark:text-gray-400"></p>
+					</div>
+					<div>
+						<label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Additional Instructions</label>
+						<textarea id="description" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="e.g. Please bring your own containers..."></textarea>
+					</div>
+				</div>
+
+				<div class="hidden">
+					<input type="text" id="lat">
+					<input type="text" id="lng">
+				</div>
+
+				<div class="flex items-center space-x-4">
+					<button type="submit" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+						Broadcast Rescue Notification
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Leaflet JS -->
+	<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+	
+	<script is:inline>
+		document.addEventListener('DOMContentLoaded', function() {
+			const initialLat = -6.2088;
+			const initialLng = 106.8456;
+			
+			const map = L.map('map').setView([initialLat, initialLng], 13);
+			
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution: '&copy; OpenStreetMap contributors'
+			}).addTo(map);
+
+			let marker;
+
+			map.on('click', function(e) {
+				updateMarker(e.latlng);
+			});
+
+			document.getElementById('locate-me').addEventListener('click', function() {
+				if (!navigator.geolocation) {
+					alert('Geolocation is not supported by your browser');
+					return;
+				}
+
+				navigator.geolocation.getCurrentPosition((position) => {
+					const { latitude, longitude } = position.coords;
+					const latlng = L.latLng(latitude, longitude);
+					map.setView(latlng, 17);
+					updateMarker(latlng);
+				}, (error) => {
+					alert('Unable to retrieve location: ' + error.message);
+				});
+			});
+
+			function updateMarker(latlng) {
+				if (marker) {
+					marker.setLatLng(latlng);
+				} else {
+					marker = L.marker(latlng, { draggable: true }).addTo(map);
+					marker.on('dragend', function(event) {
+						const position = marker.getLatLng();
+						handleLocationChange(position.lat, position.lng);
+					});
+				}
+				handleLocationChange(latlng.lat, latlng.lng);
+			}
+
+			async function handleLocationChange(lat, lng) {
+				document.getElementById('lat').value = lat.toFixed(6);
+				document.getElementById('lng').value = lng.toFixed(6);
+				
+				const statusEl = document.getElementById('geocoding-status');
+				statusEl.textContent = 'Fetching address...';
+				
+				try {
+					const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
+						headers: { 'Accept-Language': 'id,en' }
+					});
+					const data = await response.json();
+					
+					if (data && data.display_name) {
+						document.getElementById('full_address').value = data.display_name;
+						statusEl.textContent = '✓ Address matched';
+					} else {
+						statusEl.textContent = '⚠ Location pinned, street address not found';
+					}
+				} catch (error) {
+					statusEl.textContent = '⚠ Address fetch failed';
+				}
+			}
+		});
+	</script>
+</LayoutSidebar>
