@@ -27,9 +27,9 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 								<label for="quantity" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity (Portions)</label>
 								<input type="number" id="quantity" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="20" required>
 							</div>
-							<div>
+							<div lang="id">
 								<label for="pickup_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pickup Deadline</label>
-								<input type="time" id="pickup_time" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+								<input type="time" id="pickup_time" lang="id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
 							</div>
 						</div>
 						<div>
@@ -49,9 +49,9 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 						<label class="block text-sm font-medium text-gray-900 dark:text-white">Pin Location on Map</label>
 						<div id="map" class="w-full h-64 md:h-96 rounded-lg border border-gray-300 dark:border-gray-600 z-0 shadow-sm"></div>
 						<div class="flex justify-end">
-							<button type="button" id="locate-me" class="inline-flex items-center px-3 py-2 text-xs font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-								<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"></path></svg>
-								Use My Location
+							<button type="button" id="locate-me" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+								<i class="ph-bold ph-map-pin mr-2"></i>
+								Use My Current Location
 							</button>
 						</div>
 					</div>
@@ -59,7 +59,10 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 
 				<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 					<div>
-						<label for="full_address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Full Street Address (Auto-filled)</label>
+						<label for="full_address" class="flex items-center mb-2 text-sm font-medium text-gray-900 dark:text-white">
+							<i class="ph-bold ph-map-pin mr-2 text-gray-400"></i>
+							Full Street Address (Auto-filled)
+						</label>
 						<textarea id="full_address" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Pin a location to fill address..." required></textarea>
 						<p id="geocoding-status" class="mt-2 text-xs font-medium text-gray-500 dark:text-gray-400"></p>
 					</div>
@@ -104,6 +107,7 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 			});
 
 			document.getElementById('locate-me').addEventListener('click', function() {
+				console.log('Locate me clicked');
 				if (!navigator.geolocation) {
 					alert('Geolocation is not supported by your browser');
 					return;
