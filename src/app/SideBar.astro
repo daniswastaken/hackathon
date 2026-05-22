@@ -1,7 +1,5 @@
 ---
 /* eslint max-lines: 'off' */
-
-import { url } from '../lib/data.js';
 ---
 
 <aside
@@ -10,23 +8,23 @@ import { url } from '../lib/data.js';
 	aria-label="Sidebar"
 >
 	<div
-		class="relative flex flex-col flex-1 min-h-0 pt-0 bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+		class="relative flex flex-col flex-1 min-h-0 pt-0 bg-white border-r border-gray-200 dark:bg-gray-900 dark:border-gray-700"
 	>
 		<div
 			class:list={[
 				'flex flex-col flex-1 pt-5 pb-28 overflow-y-auto',
 				'scrollbar scrollbar-w-2 scrollbar-thumb-rounded-[0.1667rem]',
 				'scrollbar-thumb-slate-200 scrollbar-track-gray-400',
-				'dark:scrollbar-thumb-slate-900 dark:scrollbar-track-gray-800',
+				'dark:scrollbar-thumb-slate-800 dark:scrollbar-track-gray-950',
 			]}
 		>
 			<div
-				class="flex-1 px-3 space-y-1 bg-white dark:bg-gray-800"
+				class="flex-1 px-3 space-y-1 bg-white dark:bg-gray-900"
 			>
 				<ul class="pb-2 space-y-2" id="sidebar-nav">
 					<li>
 						<a
-							href={url()}
+							href="/"
 							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 						>
 							<i class="ph-bold ph-house text-2xl text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"></i>
@@ -35,19 +33,19 @@ import { url } from '../lib/data.js';
 					</li>
 					<li>
 						<a
-							href={url('rescue/feed')}
+							href="/rescue/feed"
 							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 						>
-							<i class="ph-bold ph-magnifying-glass text-2xl text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"></i>
+							<i class="ph-bold ph-magnifying-glass text-2xl text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700"></i>
 							<span class="ml-3">Rescue Feed</span>
 						</a>
 					</li>
 					<li>
 						<a
-							href={url('rescue/post')}
+							href="/rescue/post"
 							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
 						>
-							<i class="ph-bold ph-plus-circle text-2xl text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"></i>
+							<i class="ph-bold ph-plus-circle text-2xl text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700"></i>
 							<span class="ml-3">Post Surplus</span>
 						</a>
 					</li>
@@ -61,12 +59,11 @@ import { url } from '../lib/data.js';
 	
 	navLinks.forEach(link => {
 		const href = link.getAttribute('href');
-		// Handle root path separately
 		if (href === '/' && currentPath === '/') {
-    link.classList.add('bg-indigo-200', 'dark:bg-indigo-800', 'text-indigo-900', 'dark:text-indigo-100');
-} else if (href !== '/' && href && currentPath.startsWith(href)) {
-    link.classList.add('bg-indigo-200', 'dark:bg-indigo-800', 'text-indigo-900', 'dark:text-indigo-100');
-}
+			link.classList.add('bg-gray-100', 'dark:bg-gray-700');
+		} else if (href !== '/' && href && currentPath.startsWith(href)) {
+			link.classList.add('bg-gray-100', 'dark:bg-gray-700');
+		}
 	});
 </script>
 		<div
@@ -117,62 +114,3 @@ import { url } from '../lib/data.js';
 	id="sidebarBackdrop"
 >
 </div>
-
-<script>
-	const sidebar = document.getElementById('sidebar');
-
-	if (sidebar) {
-		const toggleSidebarMobile = (
-			sidebar: HTMLElement,
-			sidebarBackdrop: HTMLElement,
-			toggleSidebarMobileHamburger: HTMLElement,
-			toggleSidebarMobileClose: HTMLElement,
-		) => {
-			sidebar.classList.toggle('hidden');
-			sidebarBackdrop.classList.toggle('hidden');
-			toggleSidebarMobileHamburger.classList.toggle('hidden');
-			toggleSidebarMobileClose.classList.toggle('hidden');
-		};
-
-		const toggleSidebarMobileEl = document.getElementById(
-			'toggleSidebarMobile',
-		);
-		const sidebarBackdrop = document.getElementById('sidebarBackdrop')!;
-		const toggleSidebarMobileHamburger = document.getElementById(
-			'toggleSidebarMobileHamburger',
-		)!;
-		const toggleSidebarMobileClose = document.getElementById(
-			'toggleSidebarMobileClose',
-		)!;
-		const toggleSidebarMobileSearch = document.getElementById(
-			'toggleSidebarMobileSearch',
-		)!;
-
-		toggleSidebarMobileSearch?.addEventListener('click', () => {
-			toggleSidebarMobile(
-				sidebar,
-				sidebarBackdrop,
-				toggleSidebarMobileHamburger,
-				toggleSidebarMobileClose,
-			);
-		});
-
-		toggleSidebarMobileEl?.addEventListener('click', () => {
-			toggleSidebarMobile(
-				sidebar,
-				sidebarBackdrop,
-				toggleSidebarMobileHamburger,
-				toggleSidebarMobileClose,
-			);
-		});
-
-		sidebarBackdrop?.addEventListener('click', () => {
-			toggleSidebarMobile(
-				sidebar,
-				sidebarBackdrop,
-				toggleSidebarMobileHamburger,
-				toggleSidebarMobileClose,
-			);
-		});
-	}
-</script>

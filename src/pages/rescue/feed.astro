@@ -1,35 +1,5 @@
 ---
 import LayoutSidebar from '../../app/LayoutSidebar.astro';
-
-const availableFood = [
-	{
-		id: 1,
-		school: "SDN 01 Menteng",
-		type: "Nasi Kuning & Telur Balado",
-		quantity: "15 portions",
-		deadline: "14:30 PM",
-		location: "Canteen Area",
-		status: "Available"
-	},
-	{
-		id: 2,
-		school: "SMPN 12 Jakarta",
-		type: "Vegetable Soup & Rice",
-		quantity: "25 portions",
-		deadline: "15:00 PM",
-		location: "Front Gate",
-		status: "Available"
-	},
-	{
-		id: 3,
-		school: "SMKN 57 Jakarta",
-		type: "Chicken Soto",
-		quantity: "10 portions",
-		deadline: "14:00 PM",
-		location: "Gate 2",
-		status: "Claimed"
-	}
-];
 ---
 
 <LayoutSidebar>
@@ -38,45 +8,54 @@ const availableFood = [
 			<h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Live Food Rescue Feed</h1>
 		</div>
 
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-			{availableFood.map((item) => (
-				<div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800 flex flex-col justify-between">
-					<div>
-						<div class="flex items-center justify-between mb-3">
-							<span class={`text-xs font-medium px-2.5 py-0.5 rounded border ${item.status === 'Available' ? 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' : 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'}`}>
-								{item.status}
-							</span>
-							<span class="text-sm font-medium text-gray-500 dark:text-gray-400">Deadline: {item.deadline}</span>
-						</div>
-						<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{item.school}</h3>
-						<p class="text-sm text-gray-600 dark:text-gray-300 mb-4">{item.type}</p>
-						
-						<div class="space-y-2 mb-6">
-							<div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-								<i class="ph-bold ph-package mr-2"></i>
-								{item.quantity}
-							</div>
-							<div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-								<i class="ph-bold ph-map-pin mr-2"></i>
-								{item.location}
-							</div>
-						</div>
-					</div>
-
-					<div class="flex flex-col space-y-2">
-						{item.status === 'Available' && (
-							<button class="w-full text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
-								Open Map
-							</button>
-						)}
-						{item.status === 'Available' && (
-							<button class="w-full text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
-								Reserve
-							</button>
-						)}
-					</div>
-				</div>
-			))}
+		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" id="feed-container">
+            <!-- Loading -->
+            <p class="text-gray-500 dark:text-gray-400">Loading rescue feed...</p>
 		</div>
 	</div>
 </LayoutSidebar>
+
+<script>
+    async function loadFeed() {
+        try {
+            const res = await fetch('/api/rescues');
+            if (!res.ok) throw new Error('Failed to fetch');
+            const data = await res.json();
+            
+            const container = document.getElementById('feed-container');
+            if (data.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">No rescues available.</p>';
+                return;
+            }
+
+            container.innerHTML = data.map(item => `
+                <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium px-2.5 py-0.5 rounded border bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800">Available</span>
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Deadline: ${item.pickup_deadline}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">${item.school_name}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">${item.food_type}</p>
+                        <div class="space-y-2 mb-6">
+                            <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                <i class="ph-bold ph-package mr-2"></i> ${item.quantity} portions
+                            </div>
+                            <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                <i class="ph-bold ph-map-pin mr-2"></i> ${item.location_name}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col space-y-2">
+                        <button class="w-full text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">Open Map</button>
+                        <button class="w-full text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">Reserve</button>
+                    </div>
+                </div>
+            `).join('');
+        } catch (err) {
+            console.error(err);
+            document.getElementById('feed-container').innerHTML = '<p class="text-red-500">Error loading feed.</p>';
+        }
+    }
+    loadFeed();
+</script>

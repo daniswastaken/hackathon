@@ -1,10 +1,15 @@
 /// <reference types="astro/client" />
 
-// https://docs.astro.build/en/guides/environment-variables/#intellisense-for-typescript
-interface ImportMetaEnv {
-	readonly SITE: string;
+type D1Database = import("@cloudflare/workers-types").D1Database;
+
+interface Runtime {
+  env: {
+    DB: D1Database;
+  };
 }
 
-interface ImportMeta {
-	readonly env: ImportMetaEnv;
+declare namespace App {
+  interface Locals {
+    runtime: Runtime;
+  }
 }

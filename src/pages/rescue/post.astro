@@ -123,6 +123,41 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 				});
 			});
 
+			// Form submission logic
+			document.querySelector('form').addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const formData = {
+					school_name: "Generic School Name", // TODO: Link to auth
+					food_type: document.getElementById('food_type').value,
+					category: document.getElementById('category').value,
+					quantity: document.getElementById('quantity').value,
+					pickup_deadline: document.getElementById('pickup_time').value,
+					location_name: document.getElementById('location_name').value,
+					address: document.getElementById('full_address').value,
+					lat: document.getElementById('lat').value,
+					lng: document.getElementById('lng').value,
+					description: document.getElementById('description').value
+				};
+
+				try {
+					const response = await fetch('/api/rescue', {
+						method: 'POST',
+						body: JSON.stringify(formData),
+						headers: { 'Content-Type': 'application/json' }
+					});
+
+					if (response.ok) {
+						alert('Food broadcasted successfully!');
+						window.location.href = '/rescue/feed';
+					} else {
+						alert('Failed to broadcast. Please try again.');
+					}
+				} catch (err) {
+					console.error(err);
+					alert('An error occurred during broadcasting.');
+				}
+			});
+
 			function updateMarker(latlng) {
 				if (marker) {
 					marker.setLatLng(latlng);

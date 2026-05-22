@@ -36,11 +36,8 @@
 		"start": "astro dev"
 	},
 	"dependencies": {
-		"@astrojs/sitemap": "^1.1.0",
-		"@astrojs/tailwind": "^3.0.1",
 		"@faker-js/faker": "^7.6.0",
 		"apexcharts": "^3.37.2",
-		"astro": "^2.0.4",
 		"extend": "^3.0.2",
 		"flowbite": "^2.1.1",
 		"flowbite-typography": "^1.0.3",
@@ -49,9 +46,13 @@
 		"tailwindcss": "^3.0.24"
 	},
 	"devDependencies": {
+		"@astrojs/cloudflare": "^13.5.4",
+		"@astrojs/sitemap": "^3.7.2",
+		"@astrojs/tailwind": "^6.0.2",
 		"@types/eslint": "^8.21.1",
 		"@typescript-eslint/eslint-plugin": "^5.54.1",
 		"@typescript-eslint/parser": "^5.54.1",
+		"astro": "^6.3.7",
 		"astro-eslint-parser": "^0.11.0",
 		"eslint": "^8.35.0",
 		"eslint-config-airbnb-base": "^15.0.0",
