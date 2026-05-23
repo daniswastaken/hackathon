@@ -23,15 +23,10 @@ export const post: APIRoute = async (context) => {
 
     const type = url.searchParams.get('type');
 
-    // Attempt to locate DB binding in multiple possible locations
-    const db = (env as any)?.DB || (locals as any)?.runtime?.env?.DB || (context as any)?.env?.DB;
+    const db = (locals as any)?.runtime?.env?.DB || (request as any)?.env?.DB || (globalThis as any)?.env?.DB;
 
     if (!db) {
-      console.log('--- CONTEXT DUMP ---');
-      console.log('Keys:', Object.keys(context));
-      console.log('Env:', env);
-      console.log('Locals:', locals);
-      return new Response(JSON.stringify({ error: 'DB configuration missing. Check server logs for context dump.' }), { status: 500 });
+      return new Response(JSON.stringify({ error: 'DB binding not found' }), { status: 500 });
     }
 
 
