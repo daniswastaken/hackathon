@@ -8,8 +8,13 @@ export const get: APIRoute = async ({ request, locals }) => {
       return new Response(JSON.stringify({ error: 'DB binding not found' }), { status: 500 });
     }
 
-    // 1. Total rescued portions
-    const { results: totalRescuedRaw } = await db.prepare(`SELECT SUM(quantity_portions) as total FROM food_listings`).all();
+    // 1. Total rescued portions (only completed claims)
+    const { results: totalRescuedRaw } = await db.prepare(`
+      SELECT SUM(f.quantity_portions) as total 
+      FROM food_listings f 
+      JOIN claims c ON f.id = c.listing_id 
+      WHERE c.status = 'completed'
+    `).all();
     const totalRescued = totalRescuedRaw[0]?.total || 0;
 
     // 2. Top Schools (Providers)
