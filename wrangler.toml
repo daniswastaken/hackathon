@@ -5,3 +5,5 @@ compatibility_date = "2026-05-22"
 binding = "DB"
 database_name = "mbgrn"
 database_id = "d41f09fe-d9cd-4b50-af71-08df6f8b4bd9"
+
+pages_build_output_dir = "./dist"
