@@ -1,10 +1,10 @@
 ---
-import LayoutStacked from '../../app/LayoutStacked.astro';
+import LayoutCommon from '../../app/LayoutCommon.astro';
 import FormSignIn from '../../modules/FormSignIn.astro';
 ---
 
-<LayoutStacked>
-	<div class="min-h-screen align-middle flex pb-[12vh]">
+<LayoutCommon>
+	<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900 flex items-center justify-center px-4">
 		<FormSignIn />
 	</div>
-</LayoutStacked>
+</LayoutCommon>
