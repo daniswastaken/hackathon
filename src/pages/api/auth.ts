@@ -22,6 +22,19 @@ export const post: APIRoute = async (context) => {
     }
 
     const type = url.searchParams.get('type');
+    
+    let payload;
+    try {
+      payload = await request.json();
+    } catch (e) {
+      const form = await request.formData();
+      payload = { email: form.get('email'), password: form.get('password'), role: form.get('role') };
+    }
+    const { email, password, role } = payload as { email?: string; password?: string; role?: string };
+
+    if (!email || !password) {
+      return new Response(JSON.stringify({ error: 'Missing credentials' }), { status: 400 });
+    }
 
     const db = (locals as any)?.runtime?.env?.DB || (request as any)?.env?.DB || (globalThis as any)?.env?.DB;
 
