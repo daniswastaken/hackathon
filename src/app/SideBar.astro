@@ -63,9 +63,9 @@ import { url } from '../lib/data.js';
 		const href = link.getAttribute('href');
 		// Handle root path separately
 		if (href === '/' && currentPath === '/') {
-    link.classList.add('bg-indigo-200', 'dark:bg-indigo-800', 'text-indigo-900', 'dark:text-indigo-100');
+    link.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-900', 'dark:text-white');
 } else if (href !== '/' && href && currentPath.startsWith(href)) {
-    link.classList.add('bg-indigo-200', 'dark:bg-indigo-800', 'text-indigo-900', 'dark:text-indigo-100');
+    link.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-900', 'dark:text-white');
 }
 	});
 </script>
