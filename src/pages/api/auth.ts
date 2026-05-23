@@ -13,87 +13,61 @@ import type { D1Database, D1PreparedStatement } from '@cloudflare/workers-types'
  * NOTE: This implementation stores passwords in plain text for demo purposes.
  * In production you should hash passwords with a proper algorithm like bcrypt.
  */
-export const post: APIRoute = async ({ request, url, env }) => {
-  // Ensure request is POST
-  if (request.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
-  const type = url.searchParams.get('type');
-  // Validate type param
-  if (!type) {
-    return new Response(JSON.stringify({ error: 'Missing type query param' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
-
-  let payload;
+export const post: APIRoute = async (context) => {
+  const { request, url, env, locals } = context;
+  console.log('--- CONTEXT KEYS ---', Object.keys(context));
+  
   try {
-    // Try JSON first (e.g., fetch API)
-    payload = await request.json();
-  } catch (e) {
-    // Fallback for traditional form submissions (application/x-www-form-urlencoded)
-    const form = await request.formData();
-    payload = {
-      email: form.get('email')?.toString(),
-      password: form.get('password')?.toString(),
-      role: form.get('role')?.toString(),
-    };
-  }
-  const { email, password, role } = payload as { email?: string; password?: string; role?: string };
+    if (request.method !== 'POST') {
+      return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
+    }
 
-  if (!email || !password) {
-    return new Response(JSON.stringify({ error: 'Missing credentials' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
+    const type = url.searchParams.get('type');
+    if (!type) {
+      return new Response(JSON.stringify({ error: 'Missing type query param' }), { status: 400 });
+    }
 
-  const db: D1Database = (env as Env).DB;
-  if (!db) {
-    return new Response(JSON.stringify({ error: 'Database not configured' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
-  if (type === 'signup') {
-    const stmt = db.prepare('INSERT INTO users (email, password, role) VALUES (?, ?, ?)');
+    let payload;
     try {
-      await stmt.bind(email, password, role ?? 'receiver').run();
-      return new Response(JSON.stringify({ success: true }), {
-        status: 201,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    } catch (e: any) {
-      return new Response(JSON.stringify({ error: e.message ?? 'Signup failed' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      payload = await request.json();
+    } catch (e) {
+      const form = await request.formData();
+      payload = { email: form.get('email'), password: form.get('password'), role: form.get('role') };
     }
-  } else if (type === 'login') {
-    const stmt = db.prepare('SELECT id, email, role FROM users WHERE email = ? AND password = ?');
-    const row = await stmt.bind(email, password).first();
-    if (row) {
-      return new Response(JSON.stringify({ success: true, user: row }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-    return new Response(JSON.stringify({ error: 'Invalid credentials' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
+    const { email, password, role } = payload as { email?: string; password?: string; role?: string };
 
-  return new Response(JSON.stringify({ error: 'Invalid type' }), {
-    status: 400,
-    headers: { 'Content-Type': 'application/json' },
-  });
+    if (!email || !password) {
+      return new Response(JSON.stringify({ error: 'Missing credentials' }), { status: 400 });
+    }
+
+    // Wrangler shows binding as env.DB
+    // For Cloudflare Pages + Astro server mode, look in locals.runtime.env
+    const db = (locals as any)?.runtime?.env?.DB || (env as any)?.DB;
+
+    if (!db) {
+      console.log('--- DB BINDING DEBUG ---');
+      console.log('Env keys:', Object.keys(env || {}));
+      return new Response(JSON.stringify({ error: 'DB configuration missing' }), { status: 500 });
+    }
+
+
+    if (type === 'signup') {
+      await db.prepare('INSERT INTO users (email, password, role) VALUES (?, ?, ?)')
+        .bind(email, password, role ?? 'receiver').run();
+      return new Response(JSON.stringify({ success: true }), { status: 201 });
+    } else if (type === 'login') {
+      const row = await db.prepare('SELECT id, email, role FROM users WHERE email = ? AND password = ?')
+        .bind(email, password).first();
+      if (row) {
+        return new Response(JSON.stringify({ success: true, user: row }), { status: 200 });
+      }
+      return new Response(JSON.stringify({ error: 'Invalid credentials' }), { status: 401 });
+    }
+
+    return new Response(JSON.stringify({ error: 'Invalid type' }), { status: 400 });
+  } catch (e: any) {
+    console.error('API Error:', e);
+    return new Response(JSON.stringify({ error: 'Internal Error: ' + e.message }), { status: 500 });
+  }
 };
 
