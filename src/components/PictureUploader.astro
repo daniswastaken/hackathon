@@ -71,7 +71,7 @@ const { title } = Astro.props;
 			fileInput?.click();
 		});
 
-		fileInput?.addEventListener('change', (e) => {
+		fileInput?.addEventListener('change', async (e) => {
 			const target = e.target as HTMLInputElement;
 			if (target.files && target.files[0]) {
 				const file = target.files[0];
@@ -79,11 +79,34 @@ const { title } = Astro.props;
 					alert('File size exceeds 800K limit');
 					return;
 				}
+				
 				const reader = new FileReader();
-				reader.onload = (event) => {
+				reader.onload = async (event) => {
 					const base64 = event.target?.result as string;
 					if (previewEl) previewEl.src = base64;
-					(window as any).NEW_AVATAR = base64;
+
+					// Automatically trigger upload
+					const userStr = localStorage.getItem('user');
+					if (userStr) {
+						const user = JSON.parse(userStr);
+						try {
+							const res = await fetch('/api/user', {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify({ id: user.id, avatar: base64 })
+							});
+							if (res.ok) {
+								const data = await res.json();
+								localStorage.setItem('user', JSON.stringify(data.user));
+								alert('Profile picture updated!');
+							} else {
+								alert('Failed to upload picture');
+							}
+						} catch (error) {
+							console.error('Upload error:', error);
+							alert('An error occurred during upload');
+						}
+					}
 				};
 				reader.readAsDataURL(file);
 			}
