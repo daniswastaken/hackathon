@@ -1,0 +1,8 @@
+name = "mbgrn"
+main = "src/index.ts"
+compatibility_date = "2026-05-22"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "mbgrn"
+database_id = "d41f09fe-d9cd-4b50-af71-08df6f8b4bd9"

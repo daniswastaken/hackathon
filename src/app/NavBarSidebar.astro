@@ -74,14 +74,15 @@ import SearchInput from '../components/SearchInput.astro';
 						id="dropdown-2"
 					>
 						<div class="px-4 py-3" role="none">
-							<p class="text-sm text-gray-900 dark:text-white" role="none">
-								Neil Sims
+							<p class="text-sm text-gray-900 dark:text-white" role="none" id="nav-user-name">
+								Loading...
 							</p>
 							<p
 								class="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
 								role="none"
+								id="nav-user-email"
 							>
-								neil.sims@flowbite.com
+								loading@example.com
 							</p>
 						</div>
 						<ul class="py-1" role="none">
@@ -95,6 +96,7 @@ import SearchInput from '../components/SearchInput.astro';
 							<li>
 								<a
 									href="#"
+									id="sign-out-btn"
 									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
 									role="menuitem">Sign out</a
 								>
@@ -106,3 +108,25 @@ import SearchInput from '../components/SearchInput.astro';
 		</div>
 	</div>
 </nav>
+
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		const userStr = localStorage.getItem('user');
+		if (userStr) {
+			const user = JSON.parse(userStr);
+			const nameEl = document.getElementById('nav-user-name');
+			const emailEl = document.getElementById('nav-user-email');
+			if (nameEl) nameEl.textContent = user.name || 'User';
+			if (emailEl) emailEl.textContent = user.email || '';
+		}
+
+		const signOutBtn = document.getElementById('sign-out-btn');
+		if (signOutBtn) {
+			signOutBtn.addEventListener('click', (e) => {
+				e.preventDefault();
+				localStorage.removeItem('user');
+				window.location.href = '/authentication/sign-in';
+			});
+		}
+	});
+</script>

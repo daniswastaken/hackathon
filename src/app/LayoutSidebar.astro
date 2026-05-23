@@ -21,3 +21,13 @@ import SideBar from './SideBar.astro';
 		</div>
 	</div>
 </LayoutCommon>
+
+<script>
+	// Auth Guard
+	document.addEventListener('DOMContentLoaded', () => {
+		const userStr = localStorage.getItem('user');
+		if (!userStr && !window.location.pathname.startsWith('/authentication/')) {
+			window.location.href = '/authentication/sign-in';
+		}
+	});
+</script>

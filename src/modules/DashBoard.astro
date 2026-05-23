@@ -1,7 +1,24 @@
-﻿---
+---
 /* eslint max-lines: 'off' */
 
 import { asset } from '../lib/data';
+
+let dashData: any = {
+	totalRescued: 0,
+	topSchools: [],
+	topVolunteers: [],
+	activeSchools: 0,
+	totalVolunteers: 0
+};
+
+try {
+	const response = await fetch(new URL('/api/dashboard', Astro.url));
+	if (response.ok) {
+		dashData = await response.json();
+	}
+} catch (e) {
+	console.error('Failed to fetch dashboard data:', e);
+}
 ---
 
 <div class="px-4 pt-6">
@@ -10,8 +27,8 @@ import { asset } from '../lib/data';
 		<div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 			<div class="flex items-center justify-between mb-4">
 				<div class="flex-shrink-0">
-					<span class="text-xl font-bold leading-none text-gray-900 sm:text-2xl dark:text-white">12,450</span>
-					<h3 class="text-base font-light text-gray-500 dark:text-gray-400">Portions rescued this week</h3>
+					<span class="text-xl font-bold leading-none text-gray-900 sm:text-2xl dark:text-white">{dashData.totalRescued.toLocaleString()}</span>
+					<h3 class="text-base font-light text-gray-500 dark:text-gray-400">Total portions rescued</h3>
 				</div>
 				<div class="flex items-center justify-end flex-1 text-base font-medium text-green-500 dark:text-green-400">
 					18.2%
@@ -62,6 +79,7 @@ import { asset } from '../lib/data';
 			<div id="fullWidthTabContent" class="border-t border-gray-200 dark:border-gray-600">
 				<div class="hidden pt-4" id="faq" role="tabpanel">
 					<ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+						{dashData.topSchools.map((s: any) => (
 						<li class="py-3 sm:py-4">
 							<div class="flex items-center justify-between">
 								<div class="flex items-center min-w-0">
@@ -69,30 +87,29 @@ import { asset } from '../lib/data';
 										<svg class="w-6 h-6 text-primary-600 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051v.75a1 1 0 00.553.894l2 1a1 1 0 00.894 0l2-1a1 1 0 00.553-.894v-.75l2.644-1.13a1 1 0 000-1.84l-7-3zM7 10.051l-3.477-1.49L7 7.072V10.051zM10.394 13.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84l7 3a1 1 0 00.788 0l7-3a1 1 0 000-1.84l-7-3zM15.586 15l-2.592-1.11a1 1 0 00-.894 0L9.5 15.051V18.1l3.477 1.49L15.586 18.1V15z"></path></svg>
 									</div>
 									<div class="ml-3">
-										<p class="font-medium text-gray-900 truncate dark:text-white">SDN 01 Menteng</p>
-										<div class="flex items-center text-sm text-green-500 dark:text-green-400">
-											<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path clip-rule="evenodd" fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z"></path></svg>
-											5.2% <span class="ml-2 text-gray-500">Rescued Rate</span>
-										</div>
+										<p class="font-medium text-gray-900 truncate dark:text-white">{s.name || s.organization || 'School'}</p>
 									</div>
 								</div>
-								<div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">850 portions</div>
+								<div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">{s.total_rescued || 0} portions</div>
 							</div>
 						</li>
+						))}
 					</ul>
 				</div>
 				<div class="hidden pt-4" id="about" role="tabpanel">
 					<ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+						{dashData.topVolunteers.map((v: any) => (
 						<li class="py-3 sm:py-4">
 							<div class="flex items-center space-x-4">
-								<div class="flex-shrink-0"><img class="w-8 h-8 rounded-full" src={asset('images/users/neil-sims.png')} alt="Neil image" /></div>
+								<div class="flex-shrink-0"><img class="w-8 h-8 rounded-full" src={asset('images/users/neil-sims.png')} alt="Volunteer image" /></div>
 								<div class="flex-1 min-w-0">
-									<p class="font-medium text-gray-900 truncate dark:text-white">Neil Sims</p>
-									<p class="text-sm text-gray-500 truncate dark:text-gray-400">Elite Volunteer</p>
+									<p class="font-medium text-gray-900 truncate dark:text-white">{v.name || 'Volunteer'}</p>
+									<p class="text-sm text-gray-500 truncate dark:text-gray-400">{v.email}</p>
 								</div>
-								<div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">45 pickups</div>
+								<div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">{v.points || 0} pts</div>
 							</div>
 						</li>
+						))}
 					</ul>
 				</div>
 			</div>
@@ -108,13 +125,9 @@ import { asset } from '../lib/data';
 		<div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 			<div class="w-full">
 				<h3 class="text-base font-normal text-gray-500 dark:text-gray-400">Active Schools</h3>
-				<span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">42</span>
+				<span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">{dashData.activeSchools}</span>
 				<p class="flex items-center text-base font-normal text-gray-500 dark:text-gray-400">
-					<span class="flex items-center mr-1.5 text-sm text-green-500 dark:text-green-400">
-						<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path clip-rule="evenodd" fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z"></path></svg>
-						12.5%
-					</span>
-					Since last month
+					All registered schools
 				</p>
 			</div>
 			<div class="w-full" id="new-products-chart"></div>
@@ -122,13 +135,9 @@ import { asset } from '../lib/data';
 		<div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 			<div class="w-full">
 				<h3 class="text-base font-normal text-gray-500 dark:text-gray-400">Rescue Volunteers</h3>
-				<span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">1,240</span>
+				<span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">{dashData.totalVolunteers}</span>
 				<p class="flex items-center text-base font-normal text-gray-500 dark:text-gray-400">
-					<span class="flex items-center mr-1.5 text-sm text-green-500 dark:text-green-400">
-						<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path clip-rule="evenodd" fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z"></path></svg>
-						3.4%
-					</span>
-					Since last month
+					All registered receivers
 				</p>
 			</div>
 			<div class="w-full" id="week-signups-chart"></div>
@@ -140,12 +149,6 @@ import { asset } from '../lib/data';
 					<div class="w-16 text-sm font-medium dark:text-white">Rescued</div>
 					<div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 ml-2">
 						<div class="bg-primary-600 h-2.5 rounded-full dark:bg-primary-500" style="width: 92%"></div>
-					</div>
-				</div>
-				<div class="flex items-center">
-					<div class="w-16 text-sm font-medium dark:text-white">Target</div>
-					<div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 ml-2">
-						<div class="bg-primary-600 h-2.5 rounded-full dark:bg-primary-500" style="width: 100%"></div>
 					</div>
 				</div>
 			</div>

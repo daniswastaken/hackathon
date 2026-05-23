@@ -80,6 +80,7 @@ import { asset, url } from '../lib/data.js';
 			>
 			<div class="text-sm font-medium text-gray-500 dark:text-gray-400">
 				Not registered? <a
+					href="/authentication/sign-up"
 					class="text-primary-700 hover:underline dark:text-primary-500"
 					>Create account</a
 				>
@@ -87,3 +88,32 @@ import { asset, url } from '../lib/data.js';
 		</form>
 	</div>
 </div>
+
+<script>
+	const form = document.querySelector('form');
+	form?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const formData = new FormData(form);
+		const email = formData.get('email');
+		const password = formData.get('password');
+
+		try {
+			const res = await fetch('/api/auth?type=login', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email, password })
+			});
+			const data = await res.json();
+			if (res.ok) {
+				// Success
+				localStorage.setItem('user', JSON.stringify(data.user));
+				window.location.href = '/dashboard';
+			} else {
+				alert(data.error || 'Failed to login');
+			}
+		} catch (error) {
+			console.error('Error:', error);
+			alert('An error occurred');
+		}
+	});
+</script>

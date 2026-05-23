@@ -15,33 +15,33 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 				</div>
 			</div>
 			
-			<form class="space-y-6">
+			<form id="post-surplus-form" class="space-y-6">
 				<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 					<div class="space-y-4">
 						<div>
 							<label for="food_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Food Type</label>
-							<input type="text" id="food_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="e.g. Nasi Kuning, Side Dishes" required>
+							<input type="text" id="food_type" name="food_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="e.g. Nasi Kuning, Side Dishes" required>
 						</div>
 						<div class="grid grid-cols-2 gap-4">
 							<div>
 								<label for="quantity" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity (Portions)</label>
-								<input type="number" id="quantity" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="20" required>
+								<input type="number" id="quantity" name="quantity" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="20" required>
 							</div>
 							<div lang="id">
 								<label for="pickup_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pickup Deadline</label>
-								<input type="time" id="pickup_time" lang="id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+								<input type="time" id="pickup_time" name="pickup_time" lang="id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
 							</div>
 						</div>
 						<div>
 							<label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Intended Use / Category</label>
-							<select id="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+							<select id="category" name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
 								<option value="consumption">Human Consumption (Safe to Eat)</option>
 								<option value="farm">Farm Feed / Bio-fertilizer (Waste)</option>
 							</select>
 						</div>
 						<div>
 							<label for="location_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pickup Point (Specific Area)</label>
-							<input type="text" id="location_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="e.g. Front Gate / Canteen" required>
+							<input type="text" id="location_name" name="location_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="e.g. Front Gate / Canteen" required>
 						</div>
 					</div>
 
@@ -63,18 +63,18 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 							<i class="ph-bold ph-map-pin mr-2 text-gray-400"></i>
 							Full Street Address (Auto-filled)
 						</label>
-						<textarea id="full_address" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Pin a location to fill address..." required></textarea>
+						<textarea id="full_address" name="full_address" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Pin a location to fill address..." required></textarea>
 						<p id="geocoding-status" class="mt-2 text-xs font-medium text-gray-500 dark:text-gray-400"></p>
 					</div>
 					<div>
 						<label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Additional Instructions</label>
-						<textarea id="description" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="e.g. Please bring your own containers..."></textarea>
+						<textarea id="description" name="description" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="e.g. Please bring your own containers..."></textarea>
 					</div>
 				</div>
 
 				<div class="hidden">
-					<input type="text" id="lat">
-					<input type="text" id="lng">
+					<input type="text" id="lat" name="lat">
+					<input type="text" id="lng" name="lng">
 				</div>
 
 				<div class="flex items-center space-x-4">
@@ -85,6 +85,60 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 			</form>
 		</div>
 	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const form = document.getElementById('post-surplus-form');
+			if (form) {
+				form.addEventListener('submit', async (e) => {
+					e.preventDefault();
+					const userStr = localStorage.getItem('user');
+					if (!userStr) {
+						alert('You must be logged in as a provider to post surplus!');
+						return;
+					}
+					const user = JSON.parse(userStr);
+					if (user.role !== 'provider') {
+						alert('Only school providers can post surplus food!');
+						return;
+					}
+
+					const fd = new FormData(form as HTMLFormElement);
+					
+					const payload = {
+						provider_id: user.id,
+						title: fd.get('food_type'),
+						quantity_portions: parseInt(fd.get('quantity') as string, 10),
+						pickup_time: fd.get('pickup_time'),
+						category: fd.get('category'),
+						location: fd.get('location_name'),
+						address: fd.get('full_address'),
+						description: fd.get('description'),
+						latitude: parseFloat(fd.get('lat') as string),
+						longitude: parseFloat(fd.get('lng') as string)
+					};
+
+					try {
+						const res = await fetch('/api/food', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify(payload)
+						});
+						if (res.ok) {
+							alert('Food listing successfully broadcasted!');
+							window.location.href = '/rescue/feed';
+						} else {
+							const errorData = await res.json();
+							alert('Error: ' + errorData.error);
+						}
+					} catch (err) {
+						console.error(err);
+						alert('Failed to post listing.');
+					}
+				});
+			}
+		});
+	</script>
 
 	<!-- Leaflet JS -->
 	<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
