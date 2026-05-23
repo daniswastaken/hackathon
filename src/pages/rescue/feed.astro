@@ -60,6 +60,12 @@ try {
 									Reserve
 								</button>
 							)}
+							{/* Provider can delete their own post */}
+							<button 
+								onclick={`const user = JSON.parse(localStorage.getItem('user') || '{}'); if (user.id == ${item.provider_id}) { fetch('/api/rescue', { method: 'POST', body: JSON.stringify({ action: 'delete', listingId: ${item.id} }) }).then(r => r.ok ? location.reload() : alert('Failed')) } else { alert('Only the school can delete this post.') }`}
+								class="w-full text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
+								Delete Post
+							</button>
 						</div>
 					</div>
 				))
