@@ -52,13 +52,18 @@ export const post: APIRoute = async ({ request, locals }) => {
     }
 
     // Update the database
-    if (avatar !== undefined) {
-      await db.prepare('UPDATE users SET name = ?, email = ?, phone = ?, city = ?, address = ?, avatar = ? WHERE id = ?')
-        .bind(name ?? null, email ?? null, phone ?? null, city ?? null, address ?? null, avatar, id).run();
-    } else {
-      await db.prepare('UPDATE users SET name = ?, email = ?, phone = ?, city = ?, address = ? WHERE id = ?')
-        .bind(name ?? null, email ?? null, phone ?? null, city ?? null, address ?? null, id).run();
-    }
+    const query = `
+      UPDATE users 
+      SET name = COALESCE(?, name), 
+          email = COALESCE(?, email), 
+          phone = COALESCE(?, phone), 
+          city = COALESCE(?, city), 
+          address = COALESCE(?, address),
+          avatar = COALESCE(?, avatar)
+      WHERE id = ?
+    `;
+    await db.prepare(query)
+      .bind(name || null, email || null, phone || null, city || null, address || null, avatar || null, id).run();
 
     // Get the updated user info
     const updatedUser = await db.prepare('SELECT id, email, role, name, avatar, phone, organization, city, address, points FROM users WHERE id = ?')
