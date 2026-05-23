@@ -9,7 +9,8 @@ let dashData: any = {
 	topVolunteers: [],
 	activeSchools: 0,
 	totalVolunteers: 0,
-	chartData: null
+	chartData: null,
+	growthPercentage: 0
 };
 
 try {
@@ -17,6 +18,12 @@ try {
 	if (db) {
 		const { results: totalRescuedRaw } = await db.prepare(`SELECT SUM(quantity_portions) as total FROM food_listings`).all();
 		dashData.totalRescued = totalRescuedRaw[0]?.total || 0;
+
+		const { results: recentRescuedRaw } = await db.prepare(`SELECT SUM(quantity_portions) as total FROM food_listings WHERE created_at >= date('now', '-7 days')`).all();
+		const { results: pastRescuedRaw } = await db.prepare(`SELECT SUM(quantity_portions) as total FROM food_listings WHERE created_at >= date('now', '-14 days') AND created_at < date('now', '-7 days')`).all();
+		const recent = recentRescuedRaw[0]?.total || 0;
+		const past = pastRescuedRaw[0]?.total || 0;
+		dashData.growthPercentage = past > 0 ? ((recent - past) / past) * 100 : (recent > 0 ? 100 : 0);
 
 		const { results: topSchools } = await db.prepare(`
 			SELECT u.id, u.name, u.organization, SUM(f.quantity_portions) as total_rescued
@@ -26,7 +33,7 @@ try {
 		dashData.topSchools = topSchools;
 
 		const { results: topVolunteers } = await db.prepare(`
-			SELECT id, name, email, points FROM users WHERE role = 'receiver' ORDER BY points DESC LIMIT 5
+			SELECT id, name, email, avatar, points FROM users WHERE role = 'receiver' ORDER BY points DESC LIMIT 5
 		`).all();
 		dashData.topVolunteers = topVolunteers;
 
@@ -73,11 +80,17 @@ try {
 					<span class="text-xl font-bold leading-none text-gray-900 sm:text-2xl dark:text-white">{dashData.totalRescued.toLocaleString()}</span>
 					<h3 class="text-base font-light text-gray-500 dark:text-gray-400">Total portions rescued</h3>
 				</div>
-				<div class="flex items-center justify-end flex-1 text-base font-medium text-green-500 dark:text-green-400">
-					18.2%
-					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-						<path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-					</svg>
+				<div class={`flex items-center justify-end flex-1 text-base font-medium ${dashData.growthPercentage >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
+					{Math.abs(dashData.growthPercentage).toFixed(1)}%
+					{dashData.growthPercentage >= 0 ? (
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+						</svg>
+					) : (
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd" d="M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+						</svg>
+					)}
 				</div>
 			</div>
 
@@ -144,7 +157,7 @@ try {
 						{dashData.topVolunteers.map((v: any) => (
 						<li class="py-3 sm:py-4">
 							<div class="flex items-center space-x-4">
-								<div class="flex-shrink-0"><img class="w-8 h-8 rounded-full" src={asset('images/users/neil-sims.png')} alt="Volunteer image" /></div>
+								<div class="flex-shrink-0"><img class="w-8 h-8 rounded-full" src={v.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(v.name || v.email || 'User')}&background=random`} alt="Volunteer image" /></div>
 								<div class="flex-1 min-w-0">
 									<p class="font-medium text-gray-900 truncate dark:text-white">{v.name || 'Volunteer'}</p>
 									<p class="text-sm text-gray-500 truncate dark:text-gray-400">{v.email}</p>
