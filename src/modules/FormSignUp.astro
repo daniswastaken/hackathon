@@ -23,6 +23,21 @@ import mbgLogo from '../assets/mbg-rn.svg';
 		<form class="mt-8 space-y-6" action="#">
 			<div>
 				<label
+					for="name"
+					class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+					>Your name</label
+				>
+				<input
+					type="text"
+					name="name"
+					id="name"
+					class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+					placeholder="Budi Santoso"
+					required
+				/>
+			</div>
+			<div>
+				<label
 					for="email"
 					class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
 					>Your email</label
@@ -124,6 +139,7 @@ import mbgLogo from '../assets/mbg-rn.svg';
 		e.preventDefault();
 		const formData = new FormData(form);
 		const email = formData.get('email');
+		const name = formData.get('name');
 		const password = formData.get('password');
 		const confirmPassword = formData.get('confirm-password');
 		const role = formData.get('role');
@@ -137,7 +153,7 @@ import mbgLogo from '../assets/mbg-rn.svg';
 			const res = await fetch('/api/auth?type=signup', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email, password, role })
+				body: JSON.stringify({ email, name, password, role })
 			});
 			const data = await res.json();
 			if (res.ok) {

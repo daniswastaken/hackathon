@@ -66,6 +66,7 @@ import SearchInput from '../components/SearchInput.astro';
 						>
 							<span class="sr-only">Open user menu</span>
 							<img
+								id="nav-user-avatar"
 								class="w-8 h-8 rounded-full"
 								src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
 								alt="user photo"
@@ -120,8 +121,10 @@ import SearchInput from '../components/SearchInput.astro';
 			const user = JSON.parse(userStr);
 			const nameEl = document.getElementById('nav-user-name');
 			const emailEl = document.getElementById('nav-user-email');
+			const avatarEl = document.getElementById('nav-user-avatar') as HTMLImageElement;
 			if (nameEl) nameEl.textContent = user.name || 'User';
 			if (emailEl) emailEl.textContent = user.email || '';
+			if (avatarEl) avatarEl.src = user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || user.email || 'User')}&background=random`;
 		}
 
 		const signOutBtn = document.getElementById('sign-out-btn');

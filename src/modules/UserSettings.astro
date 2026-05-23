@@ -34,7 +34,7 @@ import ToggleSwitch from '../components/ToggleSwitch.astro';
 			<!-- General Information -->
 			<div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-6 dark:bg-gray-800 dark:border-gray-700">
 				<h3 class="mb-4 text-xl font-semibold dark:text-white">General Information</h3>
-				<form action="#">
+				<form id="general-info-form">
 					<div class="grid grid-cols-6 gap-6">
 						<div class="col-span-6">
 							<label for="full-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Full Name</label>
@@ -131,3 +131,105 @@ import ToggleSwitch from '../components/ToggleSwitch.astro';
 		</div>
 	</div>
 </div>
+
+<script>
+	document.addEventListener('DOMContentLoaded', async () => {
+		const userStr = localStorage.getItem('user');
+		if (!userStr) {
+			window.location.href = '/authentication/sign-in';
+			return;
+		}
+
+		const localUser = JSON.parse(userStr);
+		const userId = localUser.id;
+
+		const fullNameInput = document.getElementById('full-name') as HTMLInputElement;
+		const emailInput = document.getElementById('email') as HTMLInputElement;
+		const phoneInput = document.getElementById('phone-number') as HTMLInputElement;
+		const cityInput = document.getElementById('city') as HTMLInputElement;
+		const addressInput = document.getElementById('address') as HTMLTextAreaElement;
+		const form = document.getElementById('general-info-form');
+
+		// 1. Load latest user settings from database
+		try {
+			const res = await fetch(`/api/user?id=${userId}`);
+			if (res.ok) {
+				const data = await res.json();
+				if (data.success && data.user) {
+					// Save updated user to localstorage
+					localStorage.setItem('user', JSON.stringify(data.user));
+					
+					// Populate inputs
+					if (fullNameInput) fullNameInput.value = data.user.name || '';
+					if (emailInput) emailInput.value = data.user.email || '';
+					if (phoneInput) phoneInput.value = data.user.phone || '';
+					if (cityInput) cityInput.value = data.user.city || '';
+					if (addressInput) addressInput.value = data.user.address || '';
+
+					// Update navbar if elements exist
+					const nameEl = document.getElementById('nav-user-name');
+					const emailEl = document.getElementById('nav-user-email');
+					const avatarEl = document.getElementById('nav-user-avatar') as HTMLImageElement;
+					if (nameEl) nameEl.textContent = data.user.name || 'User';
+					if (emailEl) emailEl.textContent = data.user.email || '';
+					if (avatarEl) avatarEl.src = data.user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.name || data.user.email || 'User')}&background=random`;
+				}
+			}
+		} catch (err) {
+			console.error('Failed to load user data:', err);
+		}
+
+		// 2. Handle form submit to save settings
+		form?.addEventListener('submit', async (e) => {
+			e.preventDefault();
+
+			const payload: any = {
+				id: userId,
+				name: fullNameInput?.value || null,
+				email: emailInput?.value || null,
+				phone: phoneInput?.value || null,
+				city: cityInput?.value || null,
+				address: addressInput?.value || null
+			};
+
+			// Check if a new avatar was uploaded or deleted
+			if ((window as any).NEW_AVATAR !== undefined) {
+				payload.avatar = (window as any).NEW_AVATAR;
+			}
+
+			try {
+				const res = await fetch('/api/user', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(payload)
+				});
+				const data = await res.json();
+				if (res.ok && data.success) {
+					// Update local storage
+					localStorage.setItem('user', JSON.stringify(data.user));
+
+					// Update settings preview avatar if uploaded
+					const previewEl = document.getElementById('settings-avatar-preview') as HTMLImageElement;
+					if (previewEl) {
+						previewEl.src = data.user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.name || data.user.email || 'User')}&background=random`;
+					}
+
+					// Update navbar
+					const nameEl = document.getElementById('nav-user-name');
+					const emailEl = document.getElementById('nav-user-email');
+					const avatarEl = document.getElementById('nav-user-avatar') as HTMLImageElement;
+					if (nameEl) nameEl.textContent = data.user.name || 'User';
+					if (emailEl) emailEl.textContent = data.user.email || '';
+					if (avatarEl) avatarEl.src = data.user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.name || data.user.email || 'User')}&background=random`;
+
+					alert('Profile updated successfully!');
+				} else {
+					alert(data.error || 'Failed to update profile');
+				}
+			} catch (error) {
+				console.error('Error saving settings:', error);
+				alert('An error occurred while saving profile');
+			}
+		});
+	});
+</script>
