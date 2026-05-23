@@ -54,13 +54,13 @@ import mbgLogo from '../assets/mbg-rn.svg';
 			<div class="flex items-start flex-wrap">
 				<div class="flex items-center h-5">
 					<input
-						id="remember"
-						aria-describedby="remember"
-						name="remember"
-						type="checkbox"
-						class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
-						required
+					id="remember"
+					aria-describedby="remember"
+					name="remember"
+					type="checkbox"
+					class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
 					/>
+
 				</div>
 				<div class="ml-3 text-sm">
 					<label
@@ -97,6 +97,7 @@ import mbgLogo from '../assets/mbg-rn.svg';
 		const formData = new FormData(form);
 		const email = formData.get('email');
 		const password = formData.get('password');
+		const remember = formData.get('remember');
 
 		try {
 			const res = await fetch('/api/auth?type=login', {
@@ -109,7 +110,8 @@ import mbgLogo from '../assets/mbg-rn.svg';
 			const data = text ? JSON.parse(text) : {};
 			if (res.ok) {
 				// Success
-				localStorage.setItem('user', JSON.stringify(data.user));
+				const storage = remember ? localStorage : sessionStorage;
+				storage.setItem('user', JSON.stringify(data.user));
 				window.location.href = '/dashboard';
 			} else {
 				alert(data.error || 'Failed to login');
