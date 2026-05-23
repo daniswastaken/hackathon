@@ -40,12 +40,59 @@ export const get: APIRoute = async ({ request, locals }) => {
     const { results: totalVolunteersRaw } = await db.prepare(`SELECT COUNT(id) as total FROM users WHERE role = 'receiver'`).all();
     const totalVolunteers = totalVolunteersRaw[0]?.total || 0;
 
+    // 6. Chart Data (Last 7 Days)
+    const { results: foodHistoryRaw } = await db.prepare(`
+      SELECT date(created_at) as dt, category, SUM(quantity_portions) as total 
+      FROM food_listings 
+      WHERE created_at >= date('now', '-6 days') 
+      GROUP BY dt, category
+    `).all();
+
+    const { results: userHistoryRaw } = await db.prepare(`
+      SELECT date(created_at) as dt, role, COUNT(id) as total 
+      FROM users 
+      WHERE created_at >= date('now', '-6 days') 
+      GROUP BY dt, role
+    `).all();
+
+    // Format historical data into 7-day arrays
+    const chartData = {
+      labels: [] as string[],
+      consumable: [] as number[],
+      farm: [] as number[],
+      newSchools: [] as number[],
+      newVolunteers: [] as number[]
+    };
+
+    // Generate last 7 days (including today)
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dtStr = d.toISOString().split('T')[0];
+      const displayStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+      
+      chartData.labels.push(displayStr);
+      
+      const consumableDay = foodHistoryRaw.find(r => r.dt === dtStr && (r.category === 'consumable' || r.category === 'Consumable'));
+      chartData.consumable.push(Number((consumableDay?.total || 0)));
+
+      const farmDay = foodHistoryRaw.find(r => r.dt === dtStr && (r.category === 'farm' || r.category === 'Farm/Fertilizer'));
+      chartData.farm.push(Number((farmDay?.total || 0)));
+
+      const newSchoolsDay = userHistoryRaw.find(r => r.dt === dtStr && r.role === 'provider');
+      chartData.newSchools.push(Number((newSchoolsDay?.total || 0)));
+
+      const newVolunteersDay = userHistoryRaw.find(r => r.dt === dtStr && r.role === 'receiver');
+      chartData.newVolunteers.push(Number((newVolunteersDay?.total || 0)));
+    }
+
     return new Response(JSON.stringify({
       totalRescued,
       topSchools,
       topVolunteers,
       activeSchools,
-      totalVolunteers
+      totalVolunteers,
+      chartData
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }

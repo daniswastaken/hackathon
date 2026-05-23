@@ -156,6 +156,11 @@ try {
 	</div>
 </div>
 
+<script define:vars={{ chartData: dashData?.chartData || null }}>
+	if (chartData) {
+		window.CHART_DATA = chartData;
+	}
+</script>
 <script src="./DashBoard.client.ts"></script>
 
 <style is:global>

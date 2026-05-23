@@ -2,6 +2,16 @@
 
 import ApexCharts from 'apexcharts';
 
+const getChartData = () => {
+	return (window as any).CHART_DATA || {
+		labels: ['01 Feb', '02 Feb', '03 Feb', '04 Feb', '05 Feb', '06 Feb', '07 Feb'],
+		consumable: [0, 0, 0, 0, 0, 0, 0],
+		farm: [0, 0, 0, 0, 0, 0, 0],
+		newSchools: [0, 0, 0, 0, 0, 0, 0],
+		newVolunteers: [0, 0, 0, 0, 0, 0, 0]
+	};
+};
+
 const getMainChartOptions = () => {
 	let mainChartColors = {};
 
@@ -20,6 +30,8 @@ const getMainChartOptions = () => {
 			opacityTo: 0,
 		};
 	}
+
+	const chartData = getChartData();
 
 	return {
 		chart: {
@@ -60,12 +72,12 @@ const getMainChartOptions = () => {
 		series: [
 			{
 				name: 'Consumable',
-				data: [6356, 6218, 6156, 6526, 6356, 6256, 6056],
+				data: chartData.consumable,
 				color: '#10B981',
 			},
 			{
 				name: 'Farm/Fertilizer',
-				data: [2556, 2725, 2424, 2356, 2586, 2756, 2616],
+				data: chartData.farm,
 				color: '#F59E0B',
 			},
 		],
@@ -78,15 +90,7 @@ const getMainChartOptions = () => {
 			},
 		},
 		xaxis: {
-			categories: [
-				'01 Feb',
-				'02 Feb',
-				'03 Feb',
-				'04 Feb',
-				'05 Feb',
-				'06 Feb',
-				'07 Feb',
-			],
+			categories: chartData.labels,
 			labels: {
 				style: {
 					colors: [mainChartColors.labelColor],
@@ -162,21 +166,16 @@ if (document.getElementById('main-chart')) {
 }
 
 if (document.getElementById('new-products-chart')) {
+	const chartData = getChartData();
+	const formattedData = chartData.labels.map((label: string, index: number) => ({ x: label, y: chartData.newSchools[index] }));
+
 	const options = {
 		colors: ['#1A56DB', '#FDBA8C'],
 		series: [
 			{
 				name: 'Quantity',
 				color: '#1A56DB',
-				data: [
-					{ x: '01 Feb', y: 170 },
-					{ x: '02 Feb', y: 180 },
-					{ x: '03 Feb', y: 164 },
-					{ x: '04 Feb', y: 145 },
-					{ x: '05 Feb', y: 194 },
-					{ x: '06 Feb', y: 170 },
-					{ x: '07 Feb', y: 155 },
-				],
+				data: formattedData,
 			},
 		],
 		chart: {
@@ -438,6 +437,7 @@ const getVisitorsChartOptions = () => {
 
 const getSignupsChartOptions = () => {
 	let signupsChartColors = {};
+	const chartData = getChartData();
 
 	if (document.documentElement.classList.contains('dark')) {
 		signupsChartColors = {
@@ -469,18 +469,10 @@ const getSignupsChartOptions = () => {
 		series: [
 			{
 				name: 'Users',
-				data: [1334, 2435, 1753, 1328, 1155, 1632, 1336],
+				data: chartData.newVolunteers,
 			},
 		],
-		labels: [
-			'01 Feb',
-			'02 Feb',
-			'03 Feb',
-			'04 Feb',
-			'05 Feb',
-			'06 Feb',
-			'07 Feb',
-		],
+		labels: chartData.labels,
 		chart: {
 			type: 'bar',
 			height: '140px',
