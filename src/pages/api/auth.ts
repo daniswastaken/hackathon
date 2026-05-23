@@ -15,40 +15,24 @@ import type { D1Database, D1PreparedStatement } from '@cloudflare/workers-types'
  */
 export const post: APIRoute = async (context) => {
   const { request, url, env, locals } = context;
-  console.log('--- CONTEXT KEYS ---', Object.keys(context));
-  
+
   try {
     if (request.method !== 'POST') {
       return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
     }
 
     const type = url.searchParams.get('type');
-    if (!type) {
-      return new Response(JSON.stringify({ error: 'Missing type query param' }), { status: 400 });
+
+    // Attempt to locate DB binding in multiple possible locations
+    const db = (env as any)?.DB || (locals as any)?.runtime?.env?.DB || (context as any)?.env?.DB;
+
+    if (!db) {
+      console.log('--- CONTEXT DUMP ---');
+      console.log('Keys:', Object.keys(context));
+      console.log('Env:', env);
+      console.log('Locals:', locals);
+      return new Response(JSON.stringify({ error: 'DB configuration missing. Check server logs for context dump.' }), { status: 500 });
     }
-
-    let payload;
-    try {
-      payload = await request.json();
-    } catch (e) {
-      const form = await request.formData();
-      payload = { email: form.get('email'), password: form.get('password'), role: form.get('role') };
-    }
-    const { email, password, role } = payload as { email?: string; password?: string; role?: string };
-
-    if (!email || !password) {
-      return new Response(JSON.stringify({ error: 'Missing credentials' }), { status: 400 });
-    }
-// Log the entire env object to find where D1 binding is hidden
-const db = (env as any).DB || (env as any).env?.DB || (locals as any)?.runtime?.env?.DB;
-
-if (!db) {
-  console.log('--- ENV DEBUG ---');
-  console.log('Keys in env:', Object.keys(env || {}));
-  console.log('Keys in locals:', Object.keys((locals as any) || {}));
-  return new Response(JSON.stringify({ error: 'DB configuration missing. Available keys: ' + Object.keys(env || {}).join(', ') }), { status: 500 });
-}
-
 
 
     if (type === 'signup') {
