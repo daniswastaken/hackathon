@@ -13,13 +13,13 @@ const { title } = Astro.props;
 	src={asset('images/users/bonnie-green-2x.png')}
 	alt="Jese picture"
 />
-<input type="file" id="avatar-input" accept="image/*" class="hidden" />
+<input type="file" id="avatar-input" accept="image/*" capture="user" class="hidden" />
 <div>
 	<h3 class="mb-1 text-xl font-bold text-gray-900 dark:text-white">
 		{title}
 	</h3>
 	<div class="mb-4 text-sm text-gray-500 dark:text-gray-400">
-		JPG, GIF or PNG. Max size of 800K
+		JPG, GIF or PNG. Max size 800K.
 	</div>
 	<div class="flex items-center space-x-4">
 		<button
