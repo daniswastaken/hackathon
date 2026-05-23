@@ -8,16 +8,59 @@ let dashData: any = {
 	topSchools: [],
 	topVolunteers: [],
 	activeSchools: 0,
-	totalVolunteers: 0
+	totalVolunteers: 0,
+	chartData: null
 };
 
 try {
-	const response = await fetch(new URL('/api/dashboard', Astro.url));
-	if (response.ok) {
-		dashData = await response.json();
+	const db = (Astro.locals as any)?.runtime?.env?.DB;
+	if (db) {
+		const { results: totalRescuedRaw } = await db.prepare(`SELECT SUM(quantity_portions) as total FROM food_listings`).all();
+		dashData.totalRescued = totalRescuedRaw[0]?.total || 0;
+
+		const { results: topSchools } = await db.prepare(`
+			SELECT u.id, u.name, u.organization, SUM(f.quantity_portions) as total_rescued
+			FROM users u LEFT JOIN food_listings f ON u.id = f.provider_id
+			WHERE u.role = 'provider' GROUP BY u.id ORDER BY total_rescued DESC LIMIT 5
+		`).all();
+		dashData.topSchools = topSchools;
+
+		const { results: topVolunteers } = await db.prepare(`
+			SELECT id, name, email, points FROM users WHERE role = 'receiver' ORDER BY points DESC LIMIT 5
+		`).all();
+		dashData.topVolunteers = topVolunteers;
+
+		const { results: activeSchoolsRaw } = await db.prepare(`SELECT COUNT(id) as total FROM users WHERE role = 'provider'`).all();
+		dashData.activeSchools = activeSchoolsRaw[0]?.total || 0;
+
+		const { results: totalVolunteersRaw } = await db.prepare(`SELECT COUNT(id) as total FROM users WHERE role = 'receiver'`).all();
+		dashData.totalVolunteers = totalVolunteersRaw[0]?.total || 0;
+
+		// Chart data
+		const { results: foodHistoryRaw } = await db.prepare(`
+			SELECT date(created_at) as dt, category, SUM(quantity_portions) as total
+			FROM food_listings WHERE created_at >= date('now', '-6 days') GROUP BY dt, category
+		`).all();
+		const { results: userHistoryRaw } = await db.prepare(`
+			SELECT date(created_at) as dt, role, COUNT(id) as total
+			FROM users WHERE created_at >= date('now', '-6 days') GROUP BY dt, role
+		`).all();
+
+		const chartData: any = { labels: [], consumable: [], farm: [], newSchools: [], newVolunteers: [] };
+		for (let i = 6; i >= 0; i--) {
+			const d = new Date(); d.setDate(d.getDate() - i);
+			const dtStr = d.toISOString().split('T')[0];
+			const displayStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+			chartData.labels.push(displayStr);
+			chartData.consumable.push(Number(foodHistoryRaw.find((r:any) => r.dt === dtStr && (r.category === 'consumable' || r.category === 'Consumable'))?.total || 0));
+			chartData.farm.push(Number(foodHistoryRaw.find((r:any) => r.dt === dtStr && (r.category === 'farm' || r.category === 'Farm/Fertilizer'))?.total || 0));
+			chartData.newSchools.push(Number(userHistoryRaw.find((r:any) => r.dt === dtStr && r.role === 'provider')?.total || 0));
+			chartData.newVolunteers.push(Number(userHistoryRaw.find((r:any) => r.dt === dtStr && r.role === 'receiver')?.total || 0));
+		}
+		dashData.chartData = chartData;
 	}
 } catch (e) {
-	console.error('Failed to fetch dashboard data:', e);
+	console.error('Dashboard DB error:', e);
 }
 ---
 
@@ -156,10 +199,13 @@ try {
 	</div>
 </div>
 
-<script define:vars={{ chartData: dashData?.chartData || null }}>
-	if (chartData) {
-		window.CHART_DATA = chartData;
-	}
+<script define:vars={{ chartDataJson: JSON.stringify(dashData?.chartData || null) }}>
+	try {
+		var parsed = JSON.parse(chartDataJson);
+		if (parsed) {
+			window.CHART_DATA = parsed;
+		}
+	} catch(e) {}
 </script>
 <script src="./DashBoard.client.ts"></script>
 
