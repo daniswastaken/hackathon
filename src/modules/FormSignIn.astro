@@ -110,10 +110,10 @@ import mbgLogo from '../assets/mbg-rn.svg';
 			const data = text ? JSON.parse(text) : {};
 			if (res.ok) {
 				// Success
-				const storage = remember ? localStorage : sessionStorage;
-				storage.setItem('user', JSON.stringify(data.user));
+				localStorage.setItem('user', JSON.stringify(data.user));
 				window.location.href = '/dashboard';
 			} else {
+
 				alert(data.error || 'Failed to login');
 			}
 		} catch (error) {
