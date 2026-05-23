@@ -2,6 +2,7 @@
 /* eslint max-lines: 'off' */
 
 import { asset } from '../lib/data.js';
+import mbgLogo from '../assets/mbg-rn.svg';
 
 import ColorModeSwitcher from '../components/ColorModeSwitcher.astro';
 import SearchInput from '../components/SearchInput.astro';
@@ -24,7 +25,7 @@ import SearchInput from '../components/SearchInput.astro';
 				</button>
 				<a href="/" class="flex ml-2 md:mr-24">
 					<img
-						src={url('/mbg-rn.svg')}
+						src={mbgLogo}
 						class="h-8 mr-3"
 						alt="MBG Rescue Logo"
 						width="32"
@@ -34,6 +35,7 @@ import SearchInput from '../components/SearchInput.astro';
 						class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
 						>MBG Rescue</span
 					>
+
 				</a>
 
 				<SearchInput />
