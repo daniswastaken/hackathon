@@ -39,16 +39,16 @@ export const post: APIRoute = async (context) => {
     if (!email || !password) {
       return new Response(JSON.stringify({ error: 'Missing credentials' }), { status: 400 });
     }
+// Log the entire env object to find where D1 binding is hidden
+const db = (env as any).DB || (env as any).env?.DB || (locals as any)?.runtime?.env?.DB;
 
-    // Wrangler shows binding as env.DB
-    // For Cloudflare Pages + Astro server mode, look in locals.runtime.env
-    const db = (locals as any)?.runtime?.env?.DB || (env as any)?.DB;
+if (!db) {
+  console.log('--- ENV DEBUG ---');
+  console.log('Keys in env:', Object.keys(env || {}));
+  console.log('Keys in locals:', Object.keys((locals as any) || {}));
+  return new Response(JSON.stringify({ error: 'DB configuration missing. Available keys: ' + Object.keys(env || {}).join(', ') }), { status: 500 });
+}
 
-    if (!db) {
-      console.log('--- DB BINDING DEBUG ---');
-      console.log('Env keys:', Object.keys(env || {}));
-      return new Response(JSON.stringify({ error: 'DB configuration missing' }), { status: 500 });
-    }
 
 
     if (type === 'signup') {
