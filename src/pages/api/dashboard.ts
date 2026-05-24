@@ -80,7 +80,7 @@ export const get: APIRoute = async ({ request, locals }) => {
       
       chartData.labels.push(displayStr);
       
-      const consumableDay = foodHistoryRaw.find(r => r.dt === dtStr && (r.category === 'consumable' || r.category === 'Consumable'));
+      const consumableDay = foodHistoryRaw.find(r => r.dt === dtStr && (r.category === 'consumption' || r.category === 'consumable' || r.category === 'Consumable'));
       chartData.consumable.push(Number((consumableDay?.total || 0)));
 
       const farmDay = foodHistoryRaw.find(r => r.dt === dtStr && (r.category === 'farm' || r.category === 'Farm/Fertilizer'));

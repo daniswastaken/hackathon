@@ -81,7 +81,7 @@ try {
 			const dtStr = d.toISOString().split('T')[0];
 			const displayStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
 			chartData.labels.push(displayStr);
-			chartData.consumable.push(Number(foodHistoryRaw.find((r:any) => r.dt === dtStr && (r.category === 'consumable' || r.category === 'Consumable'))?.total || 0));
+			chartData.consumable.push(Number(foodHistoryRaw.find((r:any) => r.dt === dtStr && (r.category === 'consumption' || r.category === 'consumable' || r.category === 'Consumable'))?.total || 0));
 			chartData.farm.push(Number(foodHistoryRaw.find((r:any) => r.dt === dtStr && (r.category === 'farm' || r.category === 'Farm/Fertilizer'))?.total || 0));
 			chartData.newSchools.push(Number(userHistoryRaw.find((r:any) => r.dt === dtStr && r.role === 'provider')?.total || 0));
 			chartData.newVolunteers.push(Number(userHistoryRaw.find((r:any) => r.dt === dtStr && r.role === 'receiver')?.total || 0));
