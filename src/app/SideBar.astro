@@ -20,9 +20,7 @@ import { url } from '../lib/data.js';
 				'dark:scrollbar-thumb-slate-900 dark:scrollbar-track-gray-800',
 			]}
 		>
-			<div
-				class="flex-1 px-3 space-y-1 bg-white dark:bg-gray-800"
-			>
+			<div class="flex-1 px-3 space-y-1 bg-white dark:bg-gray-800">
 				<ul class="pb-2 space-y-2" id="sidebar-nav">
 					<li>
 						<a
@@ -42,47 +40,28 @@ import { url } from '../lib/data.js';
 							<span class="ml-3">Rescue Feed</span>
 						</a>
 					</li>
-					<li>
-						<a
 					<li id="post-surplus-item" class="hidden">
-						<a href={url('rescue/post')} class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
+						<a
+							href={url('rescue/post')}
+							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
+						>
 							<i class="ph-bold ph-plus-circle text-2xl text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"></i>
 							<span class="ml-3">Post Surplus</span>
 						</a>
 					</li>
 					<li id="manage-listings-item" class="hidden">
-						<a href={url('rescue/manage')} class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
+						<a
+							href={url('rescue/manage')}
+							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
+						>
 							<i class="ph-bold ph-list-bullets text-2xl text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"></i>
 							<span class="ml-3">Manage Listings</span>
 						</a>
 					</li>
-					</ul>
-					</div>
-					</div>
-
-					<script>
-					const user = JSON.parse(localStorage.getItem('user') || '{}');
-					if (user.role === 'provider') {
-					document.getElementById('post-surplus-item')?.classList.remove('hidden');
-					document.getElementById('manage-listings-item')?.classList.remove('hidden');
-					}
-					</script>
+				</ul>
+			</div>
 		</div>
 
-<script>
-	const currentPath = window.location.pathname;
-	const navLinks = document.querySelectorAll('#sidebar-nav a');
-	
-	navLinks.forEach(link => {
-		const href = link.getAttribute('href');
-		// Handle root path separately
-		if (href === '/' && currentPath === '/') {
-    link.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-900', 'dark:text-white');
-} else if (href !== '/' && href && currentPath.startsWith(href)) {
-    link.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-900', 'dark:text-white');
-}
-	});
-</script>
 		<div
 			class="absolute bottom-0 left-0 justify-center hidden w-full p-4 space-x-4 bg-white lg:flex dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700"
 			sidebar-bottom-menu
@@ -105,6 +84,7 @@ import { url } from '../lib/data.js';
 			</a>
 			<button
 				type="button"
+				id="sign-out-btn-sidebar"
 				class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
 				title="Logout"
 			>
@@ -133,60 +113,63 @@ import { url } from '../lib/data.js';
 </div>
 
 <script>
-	const sidebar = document.getElementById('sidebar');
+	document.addEventListener('DOMContentLoaded', () => {
+		const user = JSON.parse(localStorage.getItem('user') || '{}');
+		if (user.role === 'provider') {
+			document.getElementById('post-surplus-item')?.classList.remove('hidden');
+			document.getElementById('manage-listings-item')?.classList.remove('hidden');
+		}
 
-	if (sidebar) {
-		const toggleSidebarMobile = (
-			sidebar: HTMLElement,
-			sidebarBackdrop: HTMLElement,
-			toggleSidebarMobileHamburger: HTMLElement,
-			toggleSidebarMobileClose: HTMLElement,
-		) => {
-			sidebar.classList.toggle('hidden');
-			sidebarBackdrop.classList.toggle('hidden');
-			toggleSidebarMobileHamburger.classList.toggle('hidden');
-			toggleSidebarMobileClose.classList.toggle('hidden');
-		};
-
-		const toggleSidebarMobileEl = document.getElementById(
-			'toggleSidebarMobile',
-		);
-		const sidebarBackdrop = document.getElementById('sidebarBackdrop')!;
-		const toggleSidebarMobileHamburger = document.getElementById(
-			'toggleSidebarMobileHamburger',
-		)!;
-		const toggleSidebarMobileClose = document.getElementById(
-			'toggleSidebarMobileClose',
-		)!;
-		const toggleSidebarMobileSearch = document.getElementById(
-			'toggleSidebarMobileSearch',
-		)!;
-
-		toggleSidebarMobileSearch?.addEventListener('click', () => {
-			toggleSidebarMobile(
-				sidebar,
-				sidebarBackdrop,
-				toggleSidebarMobileHamburger,
-				toggleSidebarMobileClose,
-			);
+		const currentPath = window.location.pathname;
+		const navLinks = document.querySelectorAll('#sidebar-nav a');
+		
+		navLinks.forEach(link => {
+			const href = link.getAttribute('href');
+			if (href === '/' && currentPath === '/') {
+				link.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-900', 'dark:text-white');
+			} else if (href !== '/' && href && currentPath.startsWith(href)) {
+				link.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-900', 'dark:text-white');
+			}
 		});
 
-		toggleSidebarMobileEl?.addEventListener('click', () => {
-			toggleSidebarMobile(
-				sidebar,
-				sidebarBackdrop,
-				toggleSidebarMobileHamburger,
-				toggleSidebarMobileClose,
-			);
-		});
+		const sidebar = document.getElementById('sidebar');
+		if (sidebar) {
+			const toggleSidebarMobile = (
+				sidebar: HTMLElement,
+				sidebarBackdrop: HTMLElement,
+				toggleSidebarMobileHamburger: HTMLElement,
+				toggleSidebarMobileClose: HTMLElement,
+			) => {
+				sidebar.classList.toggle('hidden');
+				sidebarBackdrop.classList.toggle('hidden');
+				toggleSidebarMobileHamburger.classList.toggle('hidden');
+				toggleSidebarMobileClose.classList.toggle('hidden');
+			};
 
-		sidebarBackdrop?.addEventListener('click', () => {
-			toggleSidebarMobile(
-				sidebar,
-				sidebarBackdrop,
-				toggleSidebarMobileHamburger,
-				toggleSidebarMobileClose,
-			);
+			const toggleSidebarMobileEl = document.getElementById('toggleSidebarMobile');
+			const sidebarBackdrop = document.getElementById('sidebarBackdrop')!;
+			const toggleSidebarMobileHamburger = document.getElementById('toggleSidebarMobileHamburger')!;
+			const toggleSidebarMobileClose = document.getElementById('toggleSidebarMobileClose')!;
+			const toggleSidebarMobileSearch = document.getElementById('toggleSidebarMobileSearch')!;
+
+			toggleSidebarMobileSearch?.addEventListener('click', () => {
+				toggleSidebarMobile(sidebar, sidebarBackdrop, toggleSidebarMobileHamburger, toggleSidebarMobileClose);
+			});
+
+			toggleSidebarMobileEl?.addEventListener('click', () => {
+				toggleSidebarMobile(sidebar, sidebarBackdrop, toggleSidebarMobileHamburger, toggleSidebarMobileClose);
+			});
+
+			sidebarBackdrop?.addEventListener('click', () => {
+				toggleSidebarMobile(sidebar, sidebarBackdrop, toggleSidebarMobileHamburger, toggleSidebarMobileClose);
+			});
+		}
+
+		const signOutBtn = document.getElementById('sign-out-btn-sidebar');
+		signOutBtn?.addEventListener('click', (e) => {
+			e.preventDefault();
+			localStorage.removeItem('user');
+			window.location.href = '/authentication/sign-in';
 		});
-	}
+	});
 </script>

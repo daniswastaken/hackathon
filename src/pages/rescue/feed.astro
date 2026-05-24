@@ -55,22 +55,28 @@ try {
 							)}
 							{item.status === 'available' && (
 								<button 
-									onclick={`const user = JSON.parse(localStorage.getItem('user') || '{}'); fetch('/api/reserve', { method: 'POST', body: JSON.stringify({ listingId: ${item.id}, userId: user.id }) }).then(r => r.json()).then(data => data.success ? (alert('Reserved!'), location.reload()) : alert('Failed: ' + data.error))`}
+									onclick={`const user = JSON.parse(localStorage.getItem('user') || '{}'); if (!user.id) { alert('Please sign in first'); window.location.href='/authentication/sign-in'; return; } fetch('/api/reserve', { method: 'POST', body: JSON.stringify({ listingId: ${item.id}, userId: user.id }) }).then(r => r.json().catch(() => ({error: 'Invalid server response'}))).then(data => data.success ? (alert('Reserved!'), location.reload()) : alert('Failed: ' + (data.error || 'Unknown error'))).catch(e => alert('Request failed: ' + e.message))`}
 									class="w-full text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
 									Reserve
 								</button>
 							)}
-							{/* Client-side check for Delete visibility */}
-							<button 
-								id={`delete-btn-${item.id}`}
-								onclick={`const user = JSON.parse(localStorage.getItem('user') || '{}'); fetch('/api/rescue', { method: 'POST', body: JSON.stringify({ action: 'delete', listingId: ${item.id} }) }).then(r => r.ok ? location.reload() : alert('Failed to delete')).catch(e => alert('Error: ' + e.message))`}
-								class="hidden w-full text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
-								Delete Post
-							</button>
-							<script define:vars={{ pId: item.provider_id, lId: item.id }}>
+							{item.status === 'reserved' && (
+								<button 
+									id={`cancel-btn-${item.id}`}
+									class="hidden w-full text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+									onclick={`fetch('/api/rescue', { method: 'POST', body: JSON.stringify({ action: 'cancel', listingId: ${item.id} }) }).then(r => r.ok ? location.reload() : alert('Failed to cancel'))`}>
+									Cancel Reservation
+								</button>
+							)}
+							<script define:vars={{ pId: item.provider_id, lId: item.id, cId: item.claimant_id }}>
 								const user = JSON.parse(localStorage.getItem('user') || '{}');
+								// Show delete if owner
 								if (user && user.id == pId) {
 									document.getElementById('delete-btn-' + lId)?.classList.remove('hidden');
+								}
+								// Show cancel if claimant
+								if (user && user.id == cId) {
+									document.getElementById('cancel-btn-' + lId)?.classList.remove('hidden');
 								}
 							</script>
 						</div>
