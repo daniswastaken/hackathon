@@ -3,13 +3,20 @@
 import ApexCharts from 'apexcharts';
 
 const getChartData = () => {
-	return (window as any).CHART_DATA || {
-		labels: ['01 Feb', '02 Feb', '03 Feb', '04 Feb', '05 Feb', '06 Feb', '07 Feb'],
-		consumable: [0, 0, 0, 0, 0, 0, 0],
-		farm: [0, 0, 0, 0, 0, 0, 0],
-		newSchools: [0, 0, 0, 0, 0, 0, 0],
-		newVolunteers: [0, 0, 0, 0, 0, 0, 0]
-	};
+	if ((window as any).CHART_DATA) {
+		return (window as any).CHART_DATA;
+	}
+	// Fallback: fetch from server API
+	fetch('/api/chart-data')
+		.then(res => res.json())
+		.then(data => {
+			if (data.success && data.chartData) {
+				(window as any).CHART_DATA = data.chartData;
+				// Re-render charts with new data
+				if (typeof chart !== 'undefined') chart.updateOptions(getMainChartOptions());
+			}
+		});
+	return { labels: [], consumable: [], farm: [], newSchools: [], newVolunteers: [] };
 };
 
 const getMainChartOptions = () => {
