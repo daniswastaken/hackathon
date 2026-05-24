@@ -59,6 +59,13 @@ export const post: APIRoute = async (context) => {
         return new Response(JSON.stringify({ success: true, user: row }), { status: 200 });
       }
       return new Response(JSON.stringify({ error: 'Invalid credentials' }), { status: 401 });
+    } else if (type === 'reset-password') {
+      const user = await db.prepare('SELECT id FROM users WHERE email = ?').bind(email).first();
+      if (!user) {
+        return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
+      }
+      await db.prepare('UPDATE users SET password = ? WHERE email = ?').bind(password, email).run();
+      return new Response(JSON.stringify({ success: true }), { status: 200 });
     }
 
     return new Response(JSON.stringify({ error: 'Invalid type' }), { status: 400 });
