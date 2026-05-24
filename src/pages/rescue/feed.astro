@@ -60,19 +60,19 @@ try {
 									Reserve
 								</button>
 							)}
-							<script is:inline define:vars={{ providerId: item.provider_id, listingId: item.id }}>
-								const user = JSON.parse(localStorage.getItem('user') || '{}');
-								if (user && user.id == providerId) {
-									const btn = document.getElementById('delete-btn-' + listingId);
-									if (btn) btn.classList.remove('hidden');
-								}
-							</script>
+							{/* Client-side check for Delete visibility */}
 							<button 
 								id={`delete-btn-${item.id}`}
-								onclick={`fetch('/api/rescue', { method: 'POST', body: JSON.stringify({ action: 'delete', listingId: ${item.id} }) }).then(r => r.ok ? location.reload() : alert('Failed'))`}
+								onclick={`const user = JSON.parse(localStorage.getItem('user') || '{}'); fetch('/api/rescue', { method: 'POST', body: JSON.stringify({ action: 'delete', listingId: ${item.id} }) }).then(r => r.ok ? location.reload() : alert('Failed to delete')).catch(e => alert('Error: ' + e.message))`}
 								class="hidden w-full text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
 								Delete Post
 							</button>
+							<script define:vars={{ pId: item.provider_id, lId: item.id }}>
+								const user = JSON.parse(localStorage.getItem('user') || '{}');
+								if (user && user.id == pId) {
+									document.getElementById('delete-btn-' + lId)?.classList.remove('hidden');
+								}
+							</script>
 						</div>
 					</div>
 				))
