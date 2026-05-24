@@ -1,15 +1,21 @@
 import type { APIRoute } from 'astro';
-import type { Env } from '../../types/env';
 
-export const post: APIRoute = async ({ request, env }) => {
-  const db = (env as Env).DB;
-  const { listingId, userId } = await request.json();
-
+export const post: APIRoute = async ({ request, locals }) => {
+  const db = (locals as any)?.runtime?.env?.DB || (request as any)?.env?.DB || (globalThis as any)?.env?.DB;
+  
   if (!db) {
+    console.error('Reserve API: DB binding not found');
     return new Response(JSON.stringify({ error: 'DB binding not found' }), { status: 500 });
   }
 
   try {
+    const { listingId, userId } = await request.json();
+    console.log('Reserve request:', { listingId, userId });
+
+    if (!listingId || !userId) {
+      return new Response(JSON.stringify({ error: 'Missing listingId or userId' }), { status: 400 });
+    }
+
     // Create a claim entry
     await db.prepare('INSERT INTO claims (listing_id, receiver_id, status) VALUES (?, ?, "pending")')
       .bind(listingId, userId).run();
@@ -18,6 +24,7 @@ export const post: APIRoute = async ({ request, env }) => {
     
     return new Response(JSON.stringify({ success: true }), { status: 200 });
   } catch (e: any) {
+    console.error('Reserve API Error:', e);
     return new Response(JSON.stringify({ error: e.message }), { status: 500 });
   }
 };
