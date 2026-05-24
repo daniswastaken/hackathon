@@ -23,7 +23,7 @@ try {
 </LayoutSidebar>
 
 <script>
-  document.addEventListener('DOMContentLoaded', async () => {
+  document.addEventListener('astro:page-load', async () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (!user.id) {
       window.location.href = '/authentication/sign-in';

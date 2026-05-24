@@ -87,8 +87,9 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 	</div>
 
 	<script>
-		document.addEventListener('DOMContentLoaded', () => {
+		document.addEventListener('astro:page-load', () => {
 			const form = document.getElementById('post-surplus-form');
+
 			if (form) {
 				form.addEventListener('submit', async (e) => {
 					e.preventDefault();
@@ -131,7 +132,7 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 	<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 	
 	<script is:inline>
-		document.addEventListener('DOMContentLoaded', function() {
+		document.addEventListener('astro:page-load', function() {
 			const initialLat = -6.2088;
 			const initialLng = 106.8456;
 			

@@ -50,7 +50,7 @@ const { title } = Astro.props;
 </div>
 
 <script>
-	document.addEventListener('DOMContentLoaded', () => {
+	document.addEventListener('astro:page-load', () => {
 		const previewEl = document.getElementById('settings-avatar-preview') as HTMLImageElement;
 		const fileInput = document.getElementById('avatar-input') as HTMLInputElement;
 		const uploadBtn = document.getElementById('upload-avatar-btn');

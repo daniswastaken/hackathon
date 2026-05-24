@@ -2,8 +2,10 @@
 import pkg from '../../package.json' assert { type: 'json' };
 import { url } from '../lib/data.js';
 import mbgLogo from '../assets/mbg-rn.svg';
+import { ViewTransitions } from 'astro:transitions';
 
 import { SITE_TITLE } from './constants.js';
+---
 
 const { class: clazz } = Astro.props;
 ---
@@ -40,6 +42,7 @@ const { class: clazz } = Astro.props;
 				document.documentElement.classList.remove('dark');
 			}
 		</script>
+		<ViewTransitions />
 	</head>
 	<body
 		class:list={[

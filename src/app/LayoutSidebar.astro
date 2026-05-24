@@ -6,9 +6,9 @@ import SideBar from './SideBar.astro';
 ---
 
 <LayoutCommon>
-	<NavBarSidebar />
+	<NavBarSidebar transition:persist />
 
-	<SideBar />
+	<SideBar transition:persist />
 
 	<div class="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-950">
 		<div
@@ -24,10 +24,12 @@ import SideBar from './SideBar.astro';
 
 <script>
 	// Auth Guard
-	document.addEventListener('DOMContentLoaded', () => {
+	const checkAuth = () => {
 		const userStr = localStorage.getItem('user');
-		if (!userStr && !window.location.pathname.startsWith('/authentication/')) {
+		if (!userStr && !window.location.pathname.startsWith('/authentication/') && window.location.pathname !== '/terms') {
 			window.location.href = '/authentication/sign-in';
 		}
-	});
+	};
+
+	document.addEventListener('astro:page-load', checkAuth);
 </script>

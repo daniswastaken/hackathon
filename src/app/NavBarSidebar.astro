@@ -115,7 +115,7 @@ import SearchInput from '../components/SearchInput.astro';
 </nav>
 
 <script>
-	document.addEventListener('DOMContentLoaded', () => {
+	document.addEventListener('astro:page-load', () => {
 		const userStr = localStorage.getItem('user');
 		if (userStr) {
 			const user = JSON.parse(userStr);

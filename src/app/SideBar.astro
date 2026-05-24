@@ -113,7 +113,7 @@ import { url } from '../lib/data.js';
 </div>
 
 <script>
-	document.addEventListener('DOMContentLoaded', () => {
+	document.addEventListener('astro:page-load', () => {
 		const user = JSON.parse(localStorage.getItem('user') || '{}');
 		if (user.role === 'provider') {
 			document.getElementById('post-surplus-item')?.classList.remove('hidden');
