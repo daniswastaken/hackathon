@@ -28,7 +28,7 @@ try {
 						<div>
 							<div class="flex items-center justify-between mb-3">
 								<span class={`text-xs font-medium px-2.5 py-0.5 rounded border ${item.status === 'available' ? 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' : 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'}`}>
-									{item.status.toUpperCase()}
+									{item.status.replace('_', ' ').toUpperCase()}
 								</span>
 								<span class="text-sm font-medium text-gray-500 dark:text-gray-400">Deadline: {item.pickup_time || 'N/A'}</span>
 							</div>

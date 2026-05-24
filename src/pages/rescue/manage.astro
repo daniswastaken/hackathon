@@ -32,25 +32,35 @@ try {
 
     const container = document.getElementById('listings-container');
     const res = await fetch(`/api/food?providerId=${user.id}`);
-    const data = await res.json();
+    let data = await res.json();
     
+    // Only show active (available or reserved) listings in the management view
+    data = data.filter(item => item.status === 'available' || item.status === 'reserved');
+
     if (data.length === 0) {
       container.innerHTML = '<p>No listings found.</p>';
       return;
     }
 
-    container.innerHTML = data.map(item => `
-      <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 flex justify-between items-center">
-        <div>
-          <h3 class="font-bold">${item.title}</h3>
-          <p class="text-sm text-gray-500">${item.status} | ${item.quantity_portions} portions</p>
+    container.innerHTML = data.map(item => {
+      const displayStatus = item.status.replace('_', ' ').toUpperCase();
+      const isDone = item.status === 'picked_up' || item.status === 'completed';
+      
+      return `
+        <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 flex justify-between items-center">
+          <div>
+            <h3 class="font-bold dark:text-white">${item.title}</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">${displayStatus} | ${item.quantity_portions} portions</p>
+          </div>
+          <div class="flex gap-2">
+            ${!isDone ? `
+               <button onclick="markComplete(${item.id})" class="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium">Done</button>
+               <button onclick="deleteListing(${item.id})" class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium">Delete</button>
+            ` : '<span class="text-green-500 font-bold">COMPLETED</span>'}
+          </div>
         </div>
-        <div class="flex gap-2">
-           <button onclick="markComplete(${item.id})" class="px-3 py-1 bg-green-600 text-white rounded">Done</button>
-           <button onclick="deleteListing(${item.id})" class="px-3 py-1 bg-red-600 text-white rounded">Delete</button>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   });
 
   window.markComplete = async (id) => {
