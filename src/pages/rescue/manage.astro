@@ -64,14 +64,24 @@ try {
   });
 
   window.markComplete = async (id) => {
-    await fetch('/api/rescue', { method: 'POST', body: JSON.stringify({ action: 'complete', listingId: id }) });
-    location.reload();
+    const res = await fetch('/api/rescue', { method: 'POST', body: JSON.stringify({ action: 'complete', listingId: id }) });
+    if (res.ok) {
+      window.showToast('Rescue marked as complete!', 'success');
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      window.showToast('Failed to mark as complete', 'error');
+    }
   };
 
   window.deleteListing = async (id) => {
     if(confirm('Are you sure?')) {
-      await fetch('/api/rescue', { method: 'POST', body: JSON.stringify({ action: 'delete', listingId: id }) });
-      location.reload();
+      const res = await fetch('/api/rescue', { method: 'POST', body: JSON.stringify({ action: 'delete', listingId: id }) });
+      if (res.ok) {
+        window.showToast('Post deleted!', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        window.showToast('Failed to delete post', 'error');
+      }
     }
   };
 </script>

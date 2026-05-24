@@ -76,7 +76,7 @@ const { title } = Astro.props;
 			if (target.files && target.files[0]) {
 				const file = target.files[0];
 				if (file.size > 800 * 1024) {
-					alert('File size exceeds 800K limit');
+					window.showToast('File size exceeds 800K limit', 'error');
 					return;
 				}
 				
@@ -98,13 +98,13 @@ const { title } = Astro.props;
 							if (res.ok) {
 								const data = await res.json();
 								localStorage.setItem('user', JSON.stringify(data.user));
-								alert('Profile picture updated!');
+								window.showToast('Profile picture updated!', 'success');
 							} else {
-								alert('Failed to upload picture');
+								window.showToast('Failed to upload picture', 'error');
 							}
 						} catch (error) {
 							console.error('Upload error:', error);
-							alert('An error occurred during upload');
+							window.showToast('An error occurred during upload', 'error');
 						}
 					}
 				};

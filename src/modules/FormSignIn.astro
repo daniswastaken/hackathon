@@ -111,14 +111,16 @@ import mbgLogo from '../assets/mbg-rn.svg';
 			if (res.ok) {
 				// Success
 				localStorage.setItem('user', JSON.stringify(data.user));
-				window.location.href = '/dashboard';
+				window.showToast('Login successful!', 'success');
+				setTimeout(() => {
+					window.location.href = '/dashboard';
+				}, 1000);
 			} else {
-
-				alert(data.error || 'Failed to login');
+				window.showToast(data.error || 'Failed to login', 'error');
 			}
 		} catch (error) {
 			console.error('Error:', error);
-			alert('An error occurred: ' + (error instanceof Error ? error.message : String(error)));
+			window.showToast('An error occurred: ' + (error instanceof Error ? error.message : String(error)), 'error');
 		}
 	});
 </script>

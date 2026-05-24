@@ -222,13 +222,13 @@ import ToggleSwitch from '../components/ToggleSwitch.astro';
 					if (emailEl) emailEl.textContent = data.user.email || '';
 					if (avatarEl) avatarEl.src = data.user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.name || data.user.email || 'User')}&background=random`;
 
-					alert('Profile updated successfully!');
+					window.showToast('Profile updated successfully!', 'success');
 				} else {
-					alert(data.error || 'Failed to update profile');
+					window.showToast(data.error || 'Failed to update profile', 'error');
 				}
 			} catch (error) {
 				console.error('Error saving settings:', error);
-				alert('An error occurred while saving profile');
+				window.showToast('An error occurred while saving profile', 'error');
 			}
 		});
 	});

@@ -89,3 +89,14 @@ import mbgLogo from '../assets/mbg-rn.svg';
 		</div>
 	</div>
 </div>
+
+<script>
+	const form = document.querySelector('form');
+	form?.addEventListener('submit', (e) => {
+		e.preventDefault();
+		window.showToast('Profile unlocked!', 'success');
+		setTimeout(() => {
+			window.location.href = '/dashboard';
+		}, 1000);
+	});
+</script>

@@ -94,30 +94,15 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 					e.preventDefault();
 					const userStr = localStorage.getItem('user');
 					if (!userStr) {
-						alert('You must be logged in as a provider to post surplus!');
+						window.showToast('You must be logged in as a provider to post surplus!', 'error');
 						return;
 					}
 					const user = JSON.parse(userStr);
 					if (user.role !== 'provider') {
-						alert('Only school providers can post surplus food!');
+						window.showToast('Only school providers can post surplus food!', 'error');
 						return;
 					}
-
-					const fd = new FormData(form as HTMLFormElement);
-					
-					const payload = {
-						provider_id: user.id,
-						title: fd.get('food_type'),
-						quantity_portions: parseInt(fd.get('quantity') as string, 10),
-						pickup_time: fd.get('pickup_time'),
-						category: fd.get('category'),
-						location: fd.get('location_name'),
-						address: fd.get('full_address'),
-						description: fd.get('description'),
-						latitude: parseFloat(fd.get('lat') as string),
-						longitude: parseFloat(fd.get('lng') as string)
-					};
-
+// ...
 					try {
 						const res = await fetch('/api/food', {
 							method: 'POST',
@@ -125,15 +110,17 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 							body: JSON.stringify(payload)
 						});
 						if (res.ok) {
-							alert('Food listing successfully broadcasted!');
-							window.location.href = '/rescue/feed';
+							window.showToast('Food listing successfully broadcasted!', 'success');
+							setTimeout(() => {
+								window.location.href = '/rescue/feed';
+							}, 1500);
 						} else {
 							const errorData = await res.json();
-							alert('Error: ' + errorData.error);
+							window.showToast('Error: ' + errorData.error, 'error');
 						}
 					} catch (err) {
 						console.error(err);
-						alert('Failed to post listing.');
+						window.showToast('Failed to post listing.', 'error');
 					}
 				});
 			}
@@ -163,7 +150,7 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 			document.getElementById('locate-me').addEventListener('click', function() {
 				console.log('Locate me clicked');
 				if (!navigator.geolocation) {
-					alert('Geolocation is not supported by your browser');
+					window.showToast('Geolocation is not supported by your browser', 'error');
 					return;
 				}
 
@@ -173,7 +160,7 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 					map.setView(latlng, 17);
 					updateMarker(latlng);
 				}, (error) => {
-					alert('Unable to retrieve location: ' + error.message);
+					window.showToast('Unable to retrieve location: ' + error.message, 'error');
 				});
 			});
 

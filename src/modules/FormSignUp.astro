@@ -145,7 +145,7 @@ import mbgLogo from '../assets/mbg-rn.svg';
 		const role = formData.get('role');
 
 		if (password !== confirmPassword) {
-			alert('Passwords do not match');
+			window.showToast('Passwords do not match', 'error');
 			return;
 		}
 
@@ -157,14 +157,16 @@ import mbgLogo from '../assets/mbg-rn.svg';
 			});
 			const data = await res.json();
 			if (res.ok) {
-				alert('Account created successfully!');
-				window.location.href = '/authentication/sign-in';
+				window.showToast('Account created successfully!', 'success');
+				setTimeout(() => {
+					window.location.href = '/authentication/sign-in';
+				}, 1500);
 			} else {
-				alert(data.error || 'Failed to create account');
+				window.showToast(data.error || 'Failed to create account', 'error');
 			}
 		} catch (error) {
 			console.error('Error:', error);
-			alert('An error occurred: ' + (error instanceof Error ? error.message : String(error)));
+			window.showToast('An error occurred: ' + (error instanceof Error ? error.message : String(error)), 'error');
 		}
 	});
 </script>
