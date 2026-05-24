@@ -1,23 +1,28 @@
 import type { APIRoute } from 'astro';
 import type { Env } from '../../types/env';
 
-export const get: APIRoute = async ({ request, locals }) => {
+export const get: APIRoute = async ({ request, url, locals }) => {
   try {
-    // Try to get DB from locals.runtime (newer Astro/Cloudflare) or fallback
     const db = (locals as any)?.runtime?.env?.DB || (request as any)?.env?.DB || (globalThis as any)?.env?.DB;
+    const providerId = url.searchParams.get('providerId');
     
     if (!db) {
       return new Response(JSON.stringify({ error: 'DB binding not found' }), { status: 500 });
     }
 
-    const stmt = db.prepare(`
+    let sql = `
       SELECT f.*, u.name as school, u.organization
       FROM food_listings f
       JOIN users u ON f.provider_id = u.id
-      ORDER BY f.created_at DESC
-    `);
+    `;
+    let params: any[] = [];
+    if (providerId) {
+      sql += ' WHERE f.provider_id = ?';
+      params.push(providerId);
+    }
+    sql += ' ORDER BY f.created_at DESC';
     
-    const { results } = await stmt.all();
+    const { results } = await db.prepare(sql).bind(...params).all();
     
     return new Response(JSON.stringify(results), {
       status: 200,

@@ -1,0 +1,67 @@
+---
+import LayoutSidebar from '../../app/LayoutSidebar.astro';
+import { url } from '../../lib/data.js';
+
+let listings = [];
+try {
+  // We'll fetch by provider ID. This assumes we can get it from the session/localStorage
+  // For now, in Astro SSR, we can't easily get localStorage on the server.
+  // We will pass the provider ID via a query param or handle it client-side.
+} catch (e) {
+  console.error(e);
+}
+---
+
+<LayoutSidebar>
+  <div class="px-4 pt-6">
+    <h1 class="text-2xl font-bold mb-4">Manage Your Listings</h1>
+    <div id="listings-container" class="grid gap-4">
+      <!-- Listings will be loaded client-side -->
+      <p>Loading listings...</p>
+    </div>
+  </div>
+</LayoutSidebar>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!user.id) {
+      window.location.href = '/authentication/sign-in';
+      return;
+    }
+
+    const container = document.getElementById('listings-container');
+    const res = await fetch(`/api/food?providerId=${user.id}`);
+    const data = await res.json();
+    
+    if (data.length === 0) {
+      container.innerHTML = '<p>No listings found.</p>';
+      return;
+    }
+
+    container.innerHTML = data.map(item => `
+      <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 flex justify-between items-center">
+        <div>
+          <h3 class="font-bold">${item.title}</h3>
+          <p class="text-sm text-gray-500">${item.status} | ${item.quantity_portions} portions</p>
+        </div>
+        <div class="flex gap-2">
+           <button onclick="markComplete(${item.id})" class="px-3 py-1 bg-green-600 text-white rounded">Done</button>
+           <button onclick="deleteListing(${item.id})" class="px-3 py-1 bg-red-600 text-white rounded">Delete</button>
+        </div>
+      </div>
+    `).join('');
+  });
+
+  window.markComplete = async (id) => {
+    await fetch('/api/rescue', { method: 'POST', body: JSON.stringify({ action: 'complete', listingId: id }) });
+    location.reload();
+  };
+
+  window.deleteListing = async (id) => {
+    if(confirm('Are you sure?')) {
+      await fetch('/api/rescue', { method: 'POST', body: JSON.stringify({ action: 'delete', listingId: id }) });
+      location.reload();
+    }
+  };
+</script>
