@@ -16,6 +16,10 @@ export const post: APIRoute = async ({ request, env }) => {
     } else if (action === 'delete') {
       await db.prepare('DELETE FROM food_listings WHERE id = ?').bind(listingId).run();
       return new Response(JSON.stringify({ success: true }), { status: 200 });
+    } else if (action === 'cancel') {
+      await db.prepare('DELETE FROM claims WHERE listing_id = ?').bind(listingId).run();
+      await db.prepare('UPDATE food_listings SET status = "available" WHERE id = ?').bind(listingId).run();
+      return new Response(JSON.stringify({ success: true }), { status: 200 });
     }
     return new Response(JSON.stringify({ error: 'Invalid action' }), { status: 400 });
   } catch (e: any) {

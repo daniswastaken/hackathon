@@ -44,15 +44,23 @@ import { url } from '../lib/data.js';
 					</li>
 					<li>
 						<a
-							href={url('rescue/post')}
-							class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
-						>
-							<i class="ph-bold ph-plus-circle text-2xl text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"></i>
-							<span class="ml-3">Post Surplus</span>
-						</a>
-					</li>
-				</ul>
-			</div>
+							<li id="post-surplus-item" class="hidden">
+								<a${G(Te("rescue/post"),"href")} class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
+									<i class="ph-bold ph-plus-circle text-2xl text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"></i>
+									<span class="ml-3">Post Surplus</span>
+								</a>
+							</li>
+							</ul>
+							</div>
+							</div>
+
+							<script>
+							const user = JSON.parse(localStorage.getItem('user') || '{}');
+							if (user.role === 'provider') {
+							document.getElementById('post-surplus-item')?.classList.remove('hidden');
+							}
+							</script>
+
 		</div>
 
 <script>
