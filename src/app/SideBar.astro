@@ -50,17 +50,23 @@ import { url } from '../lib/data.js';
 							<span class="ml-3">Post Surplus</span>
 						</a>
 					</li>
-							</ul>
-							</div>
-							</div>
+					<li id="manage-listings-item" class="hidden">
+						<a href={url('rescue/manage')} class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
+							<i class="ph-bold ph-list-bullets text-2xl text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"></i>
+							<span class="ml-3">Manage Listings</span>
+						</a>
+					</li>
+					</ul>
+					</div>
+					</div>
 
-							<script>
-							const user = JSON.parse(localStorage.getItem('user') || '{}');
-							if (user.role === 'provider') {
-							document.getElementById('post-surplus-item')?.classList.remove('hidden');
-							}
-							</script>
-
+					<script>
+					const user = JSON.parse(localStorage.getItem('user') || '{}');
+					if (user.role === 'provider') {
+					document.getElementById('post-surplus-item')?.classList.remove('hidden');
+					document.getElementById('manage-listings-item')?.classList.remove('hidden');
+					}
+					</script>
 		</div>
 
 <script>
