@@ -17,12 +17,13 @@ export const get: APIRoute = async ({ request, locals }) => {
     `).all();
     const totalRescued = totalRescuedRaw[0]?.total || 0;
 
-    // 2. Top Schools (Providers)
+    // 2. Top Schools (Providers) - only completed rescues
     const { results: topSchools } = await db.prepare(`
       SELECT u.id, u.name, u.organization, SUM(f.quantity_portions) as total_rescued
       FROM users u
-      LEFT JOIN food_listings f ON u.id = f.provider_id
-      WHERE u.role = 'provider'
+      JOIN food_listings f ON u.id = f.provider_id
+      JOIN claims c ON f.id = c.listing_id
+      WHERE u.role = 'provider' AND c.status = 'completed'
       GROUP BY u.id
       ORDER BY total_rescued DESC
       LIMIT 5
@@ -45,12 +46,13 @@ export const get: APIRoute = async ({ request, locals }) => {
     const { results: totalVolunteersRaw } = await db.prepare(`SELECT COUNT(id) as total FROM users WHERE role = 'receiver'`).all();
     const totalVolunteers = totalVolunteersRaw[0]?.total || 0;
 
-    // 6. Chart Data (Last 7 Days)
+    // 6. Chart Data (Last 7 Days) - only completed rescues
     const { results: foodHistoryRaw } = await db.prepare(`
-      SELECT date(created_at) as dt, category, SUM(quantity_portions) as total 
-      FROM food_listings 
-      WHERE created_at >= date('now', '-6 days') 
-      GROUP BY dt, category
+      SELECT date(c.claimed_at) as dt, f.category, SUM(f.quantity_portions) as total 
+      FROM food_listings f 
+      JOIN claims c ON f.id = c.listing_id 
+      WHERE c.status = 'completed' AND c.claimed_at >= date('now', '-6 days') 
+      GROUP BY dt, f.category
     `).all();
 
     const { results: userHistoryRaw } = await db.prepare(`

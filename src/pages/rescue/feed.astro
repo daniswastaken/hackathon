@@ -55,8 +55,9 @@ try {
 							)}
 							{item.status === 'available' && (
 								<button 
+									id={`reserve-btn-${item.id}`}
 									onclick={`const user = JSON.parse(localStorage.getItem('user') || '{}'); if (!user.id) { alert('Please sign in first'); window.location.href='/authentication/sign-in'; return; } fetch('/api/reserve', { method: 'POST', body: JSON.stringify({ listingId: ${item.id}, userId: user.id }) }).then(r => r.json().catch(() => ({error: 'Invalid server response'}))).then(data => data.success ? (alert('Reserved!'), location.reload()) : alert('Failed: ' + (data.error || 'Unknown error'))).catch(e => alert('Request failed: ' + e.message))`}
-									class="w-full text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+									class="hidden w-full text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
 									Reserve
 								</button>
 							)}
@@ -70,6 +71,12 @@ try {
 							)}
 							<script define:vars={{ pId: item.provider_id, lId: item.id, cId: item.claimant_id }}>
 								const user = JSON.parse(localStorage.getItem('user') || '{}');
+								
+								// Show reserve ONLY if receiver and item is available
+								if (user && user.role === 'receiver') {
+									document.getElementById('reserve-btn-' + lId)?.classList.remove('hidden');
+								}
+
 								// Show delete if owner
 								if (user && user.id == pId) {
 									document.getElementById('delete-btn-' + lId)?.classList.remove('hidden');
