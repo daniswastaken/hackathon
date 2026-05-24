@@ -13,6 +13,10 @@ export default defineConfig({
 		mode: 'directory',
 	}),
 
+	experimental: {
+		viewTransitions: true,
+	},
+
 	/* Like Vercel, Netlify,… Mimicking for dev. server */
 	// trailingSlash: 'always',
 
