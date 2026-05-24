@@ -16,19 +16,38 @@ let dashData: any = {
 try {
 	const db = (Astro.locals as any)?.runtime?.env?.DB;
 	if (db) {
-		const { results: totalRescuedRaw } = await db.prepare(`SELECT SUM(quantity_portions) as total FROM food_listings`).all();
+		// Only count portions from completed claims
+		const { results: totalRescuedRaw } = await db.prepare(`
+			SELECT SUM(f.quantity_portions) as total 
+			FROM food_listings f 
+			JOIN claims c ON f.id = c.listing_id 
+			WHERE c.status = 'completed'
+		`).all();
 		dashData.totalRescued = totalRescuedRaw[0]?.total || 0;
 
-		const { results: recentRescuedRaw } = await db.prepare(`SELECT SUM(quantity_portions) as total FROM food_listings WHERE created_at >= date('now', '-7 days')`).all();
-		const { results: pastRescuedRaw } = await db.prepare(`SELECT SUM(quantity_portions) as total FROM food_listings WHERE created_at >= date('now', '-14 days') AND created_at < date('now', '-7 days')`).all();
+		const { results: recentRescuedRaw } = await db.prepare(`
+			SELECT SUM(f.quantity_portions) as total 
+			FROM food_listings f 
+			JOIN claims c ON f.id = c.listing_id 
+			WHERE c.status = 'completed' AND c.claimed_at >= date('now', '-7 days')
+		`).all();
+		const { results: pastRescuedRaw } = await db.prepare(`
+			SELECT SUM(f.quantity_portions) as total 
+			FROM food_listings f 
+			JOIN claims c ON f.id = c.listing_id 
+			WHERE c.status = 'completed' AND c.claimed_at >= date('now', '-14 days') AND c.claimed_at < date('now', '-7 days')
+		`).all();
 		const recent = recentRescuedRaw[0]?.total || 0;
 		const past = pastRescuedRaw[0]?.total || 0;
 		dashData.growthPercentage = past > 0 ? ((recent - past) / past) * 100 : (recent > 0 ? 100 : 0);
 
 		const { results: topSchools } = await db.prepare(`
-			SELECT u.id, u.name, u.organization, SUM(f.quantity_portions) as total_rescued
-			FROM users u LEFT JOIN food_listings f ON u.id = f.provider_id
-			WHERE u.role = 'provider' GROUP BY u.id ORDER BY total_rescued DESC LIMIT 5
+			SELECT u.id, u.name, u.organization, u.avatar, SUM(f.quantity_portions) as total_rescued
+			FROM users u 
+			JOIN food_listings f ON u.id = f.provider_id
+			JOIN claims c ON f.id = c.listing_id
+			WHERE u.role = 'provider' AND c.status = 'completed'
+			GROUP BY u.id ORDER BY total_rescued DESC LIMIT 5
 		`).all();
 		dashData.topSchools = topSchools;
 
@@ -45,8 +64,11 @@ try {
 
 		// Chart data
 		const { results: foodHistoryRaw } = await db.prepare(`
-			SELECT date(created_at) as dt, category, SUM(quantity_portions) as total
-			FROM food_listings WHERE created_at >= date('now', '-6 days') GROUP BY dt, category
+			SELECT date(c.claimed_at) as dt, f.category, SUM(f.quantity_portions) as total
+			FROM food_listings f
+			JOIN claims c ON f.id = c.listing_id
+			WHERE c.status = 'completed' AND c.claimed_at >= date('now', '-6 days') 
+			GROUP BY dt, f.category
 		`).all();
 		const { results: userHistoryRaw } = await db.prepare(`
 			SELECT date(created_at) as dt, role, COUNT(id) as total
@@ -140,7 +162,7 @@ try {
 							<div class="flex items-center justify-between">
 								<div class="flex items-center min-w-0">
 									<div class="flex-shrink-0 w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center dark:bg-primary-900">
-										<svg class="w-6 h-6 text-primary-600 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051v.75a1 1 0 00.553.894l2 1a1 1 0 00.894 0l2-1a1 1 0 00.553-.894v-.75l2.644-1.13a1 1 0 000-1.84l-7-3zM7 10.051l-3.477-1.49L7 7.072V10.051zM10.394 13.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84l7 3a1 1 0 00.788 0l7-3a1 1 0 000-1.84l-7-3zM15.586 15l-2.592-1.11a1 1 0 00-.894 0L9.5 15.051V18.1l3.477 1.49L15.586 18.1V15z"></path></svg>
+										<img class="w-6 h-6 rounded-full" src={s.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(s.name || s.organization || 'School')}&background=random`} alt="School image" />
 									</div>
 									<div class="ml-3">
 										<p class="font-medium text-gray-900 truncate dark:text-white">{s.name || s.organization || 'School'}</p>
