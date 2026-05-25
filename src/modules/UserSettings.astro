@@ -14,18 +14,18 @@ import ToggleSwitch from '../components/ToggleSwitch.astro';
 				<li class="inline-flex items-center">
 					<a href="/" class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
 						<svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20"><path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"></path><path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"></path></svg>
-						Overview
+						Ringkasan
 					</a>
 				</li>
 				<li>
 					<div class="flex items-center">
 						<svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1.001 4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-						<span class="ml-1 text-gray-400 md:ml-2 dark:text-gray-500">Settings</span>
+						<span class="ml-1 text-gray-400 md:ml-2 dark:text-gray-500">Pengaturan</span>
 					</div>
 				</li>
 			</ol>
 		</nav>
-		<h1 class="text-2xl font-bold text-gray-900 sm:text-3xl dark:text-white">Account Settings</h1>
+		<h1 class="text-2xl font-bold text-gray-900 sm:text-3xl dark:text-white">Pengaturan Akun</h1>
 	</div>
 
 	<div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
@@ -33,31 +33,31 @@ import ToggleSwitch from '../components/ToggleSwitch.astro';
 		<div class="xl:col-span-2 space-y-4">
 			<!-- General Information -->
 			<div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-6 dark:bg-gray-800 dark:border-gray-700">
-				<h3 class="mb-4 text-xl font-semibold dark:text-white">General Information</h3>
+				<h3 class="mb-4 text-xl font-semibold dark:text-white">Informasi Umum</h3>
 				<form id="general-info-form">
 					<div class="grid grid-cols-6 gap-6">
 						<div class="col-span-6">
-							<label for="full-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Full Name</label>
-							<input type="text" id="full-name" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="e.g. Budi Santoso" required />
+							<label for="full-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Lengkap</label>
+							<input type="text" id="full-name" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="misal: Budi Santoso" required />
 						</div>
 						<div class="col-span-6 sm:col-span-3">
-							<label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email Address</label>
+							<label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alamat Email</label>
 							<input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="budi@example.com" required />
 						</div>
 						<div class="col-span-6 sm:col-span-3">
-							<label for="phone-number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone Number</label>
+							<label for="phone-number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nomor Telepon</label>
 							<input type="text" id="phone-number" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="+62..." required />
 						</div>
 						<div class="col-span-6">
-							<label for="city" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City / Region (For proximity tracking)</label>
-							<input type="text" id="city" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="e.g. Jakarta Selatan" required />
+							<label for="city" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kota / Wilayah (Untuk pelacakan terdekat)</label>
+							<input type="text" id="city" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="misal: Jakarta Selatan" required />
 						</div>
 						<div class="col-span-6">
-							<label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pickup / Dropoff Address</label>
+							<label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alamat Pengambilan / Pengiriman</label>
 							<textarea id="address" rows="2" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Jl. Menteng No. 1..." required></textarea>
 						</div>
 						<div class="col-span-6">
-							<button type="submit" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700">Save profile</button>
+							<button type="submit" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700">Simpan profil</button>
 						</div>
 					</div>
 				</form>
@@ -65,39 +65,39 @@ import ToggleSwitch from '../components/ToggleSwitch.astro';
 
 			<!-- Notifications Combined -->
 			<div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-6 dark:bg-gray-800 dark:border-gray-700">
-				<h3 class="mb-4 text-xl font-semibold dark:text-white">Notifications & Alerts</h3>
+				<h3 class="mb-4 text-xl font-semibold dark:text-white">Notifikasi & Peringatan</h3>
 				<div class="divide-y divide-gray-200 dark:divide-gray-700">
 					<div class="flex items-center justify-between py-4">
 						<div class="flex flex-col flex-grow">
-							<div class="text-base font-semibold text-gray-900 dark:text-white">New Food Alerts</div>
-							<div class="text-sm text-gray-500 dark:text-gray-400">Get real-time alerts when nearby schools post rescue food</div>
+							<div class="text-base font-semibold text-gray-900 dark:text-white">Peringatan Makanan Baru</div>
+							<div class="text-sm text-gray-500 dark:text-gray-400">Dapatkan peringatan real-time saat sekolah terdekat memposting makanan penyelamatan</div>
 						</div>
 						<ToggleSwitch id="food-alerts" checked />
 					</div>
 					<div class="flex items-center justify-between py-4">
 						<div class="flex flex-col flex-grow">
-							<div class="text-base font-semibold text-gray-900 dark:text-white">Pickup Confirmations</div>
-							<div class="text-sm text-gray-500 dark:text-gray-400">Notifications for confirmed or updated pickup requests</div>
+							<div class="text-base font-semibold text-gray-900 dark:text-white">Konfirmasi Pengambilan</div>
+							<div class="text-sm text-gray-500 dark:text-gray-400">Notifikasi untuk permintaan pengambilan yang dikonfirmasi atau diperbarui</div>
 						</div>
 						<ToggleSwitch id="pickup-activity" checked />
 					</div>
 					<div class="flex items-center justify-between py-4">
 						<div class="flex flex-col flex-grow">
-							<div class="text-base font-semibold text-gray-900 dark:text-white">Weekly Regional Summary</div>
-							<div class="text-sm text-gray-500 dark:text-gray-400">A summary of food rescue impact in your district</div>
+							<div class="text-base font-semibold text-gray-900 dark:text-white">Ringkasan Mingguan Wilayah</div>
+							<div class="text-sm text-gray-500 dark:text-gray-400">Ringkasan dampak penyelamatan makanan di distrik Anda</div>
 						</div>
 						<ToggleSwitch id="weekly-summary" />
 					</div>
 					<div class="flex items-center justify-between pt-4 pb-2">
 						<div class="flex flex-col flex-grow">
-							<div class="text-base font-semibold text-gray-900 dark:text-white">Urgent Alerts</div>
-							<div class="text-sm text-gray-500 dark:text-gray-400">Immediate notifications for large quantity surplus</div>
+							<div class="text-base font-semibold text-gray-900 dark:text-white">Peringatan Mendesak</div>
+							<div class="text-sm text-gray-500 dark:text-gray-400">Notifikasi segera untuk surplus jumlah besar</div>
 						</div>
 						<ToggleSwitch id="urgent-alerts" checked />
 					</div>
 				</div>
 				<div class="mt-6">
-					<button class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700">Save preferences</button>
+					<button class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700">Simpan preferensi</button>
 				</div>
 			</div>
 		</div>
@@ -106,26 +106,26 @@ import ToggleSwitch from '../components/ToggleSwitch.astro';
 		<div class="space-y-4">
 			<!-- Profile Picture -->
 			<div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-				<PictureUploader title="Profile picture" />
+				<PictureUploader title="Foto profil" />
 			</div>
 
 			<!-- Security/Password -->
 			<div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-				<h3 class="mb-4 text-lg font-semibold dark:text-white">Security</h3>
+				<h3 class="mb-4 text-lg font-semibold dark:text-white">Keamanan</h3>
 				<form action="#" class="space-y-4">
 					<div>
-						<label for="current-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Current Password</label>
+						<label for="current-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kata Sandi Saat Ini</label>
 						<input type="password" id="current-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="••••••••" required />
 					</div>
 					<div>
-						<label for="new-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Password</label>
+						<label for="new-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kata Sandi Baru</label>
 						<input type="password" id="new-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="••••••••" required />
 					</div>
 					<div>
-						<label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm New Password</label>
+						<label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Konfirmasi Kata Sandi Baru</label>
 						<input type="password" id="confirm-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="••••••••" required />
 					</div>
-					<button type="submit" class="w-full text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700">Update password</button>
+					<button type="submit" class="w-full text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700">Perbarui kata sandi</button>
 				</form>
 			</div>
 		</div>
@@ -222,13 +222,13 @@ import ToggleSwitch from '../components/ToggleSwitch.astro';
 					if (emailEl) emailEl.textContent = data.user.email || '';
 					if (avatarEl) avatarEl.src = data.user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.name || data.user.email || 'User')}&background=random`;
 
-					window.showToast('Profile updated successfully!', 'success');
+					window.showToast('Profil berhasil diperbarui!', 'success');
 				} else {
-					window.showToast(data.error || 'Failed to update profile', 'error');
+					window.showToast(data.error || 'Gagal memperbarui profil', 'error');
 				}
 			} catch (error) {
 				console.error('Error saving settings:', error);
-				window.showToast('An error occurred while saving profile', 'error');
+				window.showToast('Terjadi kesalahan saat menyimpan profil', 'error');
 			}
 		});
 	});
