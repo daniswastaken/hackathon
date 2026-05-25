@@ -18,21 +18,21 @@ import mbgLogo from '../assets/mbg-rn.svg';
 		class="w-full max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow dark:bg-gray-800"
 	>
 		<h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-			Sign in to platform
+			Masuk ke platform
 		</h2>
 		<form class="mt-8 space-y-6" action="#">
 			<div>
 				<label
 					for="email"
 					class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-					>Your email</label
+					>Email Anda</label
 				>
 				<input
 					type="email"
 					name="email"
 					id="email"
 					class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-					placeholder="name@company.com"
+					placeholder="nama@perusahaan.com"
 					required
 				/>
 			</div>
@@ -40,7 +40,7 @@ import mbgLogo from '../assets/mbg-rn.svg';
 				<label
 					for="password"
 					class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-					>Your password</label
+					>Kata sandi Anda</label
 				>
 				<input
 					type="password"
@@ -65,25 +65,25 @@ import mbgLogo from '../assets/mbg-rn.svg';
 				<div class="ml-3 text-sm">
 					<label
 						for="remember"
-						class="font-medium text-gray-900 dark:text-white">Remember me</label
+						class="font-medium text-gray-900 dark:text-white">Ingat saya</label
 					>
 				</div>
 				<a
 					href="/authentication/forgot-password"
 					class="ml-auto mt-4 text-left text-sm text-primary-700 hover:underline dark:text-primary-500 w-full"
-					>Lost Password?</a
+					>Lupa kata sandi?</a
 				>
 			</div>
 			<button
 				type="submit"
 				class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-				>Login to your account</button
+				>Masuk ke akun Anda</button
 			>
 			<div class="text-sm font-medium text-gray-500 dark:text-gray-400">
-				Not registered? <a
+				Belum punya akun? <a
 					href="/authentication/sign-up"
 					class="text-primary-700 hover:underline dark:text-primary-500"
-					>Create account</a
+					>Buat akun</a
 				>
 			</div>
 		</form>
@@ -111,16 +111,16 @@ import mbgLogo from '../assets/mbg-rn.svg';
 			if (res.ok) {
 				// Success
 				localStorage.setItem('user', JSON.stringify(data.user));
-				window.showToast('Login successful!', 'success');
+				window.showToast('Berhasil masuk!', 'success');
 				setTimeout(() => {
 					window.location.href = '/dashboard';
 				}, 1000);
 			} else {
-				window.showToast(data.error || 'Failed to login', 'error');
+				window.showToast(data.error || 'Gagal masuk', 'error');
 			}
 		} catch (error) {
 			console.error('Error:', error);
-			window.showToast('An error occurred: ' + (error instanceof Error ? error.message : String(error)), 'error');
+			window.showToast('Terjadi kesalahan: ' + (error instanceof Error ? error.message : String(error)), 'error');
 		}
 	});
 </script>
