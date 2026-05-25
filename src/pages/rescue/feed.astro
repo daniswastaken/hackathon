@@ -30,20 +30,6 @@ const totalPages = Math.max(1, Math.ceil(availableFood.length / itemsPerPage));
 			<h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Live Feed Rescue MBG</h1>
 		</div>
 
-		<!-- Tab navigation (only show if more than 1 page) -->
-		{totalPages > 1 && (
-			<div class="flex flex-wrap gap-2 mb-4" id="tab-nav">
-				{Array.from({ length: totalPages }).map((_, i) => (
-					<button
-						data-page={i}
-						class={`tab-btn px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${i === 0 ? 'bg-primary-700 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'}`}
-					>
-						Halaman {i + 1}
-					</button>
-				))}
-			</div>
-		)}
-
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" id="feed-container">
 			{availableFood.length === 0 ? (
 				<p class="text-gray-500 dark:text-gray-400">Tidak ada listing makanan yang tersedia saat ini.</p>
@@ -125,34 +111,93 @@ const totalPages = Math.max(1, Math.ceil(availableFood.length / itemsPerPage));
 				})
 			)}
 		</div>
+
+		<!-- Pagination at the bottom -->
+		{totalPages > 1 && (
+			<nav class="flex justify-center items-center gap-1 mt-8" id="pagination-nav" data-total-pages={totalPages}>
+			</nav>
+		)}
 	</div>
 </LayoutSidebar>
 
-<script>
+<script define:vars={{ totalPages }}>
 	document.addEventListener('DOMContentLoaded', () => {
-		const tabNav = document.getElementById('tab-nav');
-		if (!tabNav) return;
+		const paginationNav = document.getElementById('pagination-nav');
+		if (!paginationNav) return;
 
-		tabNav.addEventListener('click', (e) => {
-			const btn = (e.target as HTMLElement).closest('[data-page]');
-			if (!btn) return;
-			const page = parseInt(btn.getAttribute('data-page') || '0');
+		const total = totalPages;
+		let currentPage = 0;
 
-			// Toggle card visibility based on selected page
+		function goToPage(page) {
+			currentPage = page;
+
+			// Toggle card visibility
 			document.querySelectorAll('.feed-card').forEach((card) => {
 				const cardPage = parseInt(card.getAttribute('data-feed-page') || '0');
-				card.classList.toggle('hidden', cardPage !== page);
+				card.classList.toggle('hidden', cardPage !== currentPage);
 			});
 
-			// Update active tab styling
-			tabNav.querySelectorAll('[data-page]').forEach((tab) => {
-				const tabPage = parseInt(tab.getAttribute('data-page') || '0');
-				if (tabPage === page) {
-					tab.className = 'tab-btn px-3 py-1.5 rounded-lg text-sm font-medium transition-colors bg-primary-700 text-white';
-				} else {
-					tab.className = 'tab-btn px-3 py-1.5 rounded-lg text-sm font-medium transition-colors bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600';
-				}
-			});
+			// Rebuild pagination UI
+			renderPagination();
+
+			// Scroll to top of feed
+			document.getElementById('feed-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		}
+
+		function renderPagination() {
+			// Sliding window: show 3 consecutive numbers starting from current, then ... and last
+			const visible = [];
+			const windowSize = 3;
+
+			// Add consecutive pages starting from current
+			for (let i = currentPage; i < Math.min(currentPage + windowSize, total); i++) {
+				visible.push(i);
+			}
+
+			// Determine if we need ellipsis and last page
+			const lastPage = total - 1;
+			const needsEllipsis = visible[visible.length - 1] < lastPage - 1;
+			const needsLast = visible[visible.length - 1] < lastPage;
+
+			let html = '';
+
+			// Previous arrow
+			html += `<button data-go="${currentPage - 1}" ${currentPage === 0 ? 'disabled' : ''} class="w-8 h-8 flex items-center justify-center rounded-full text-sm transition-colors ${currentPage === 0 ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}">&lsaquo;</button>`;
+
+			// Page number circles
+			for (const p of visible) {
+				const isActive = p === currentPage;
+				html += `<button data-go="${p}" class="w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium transition-colors ${isActive ? 'bg-primary-700 text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}">${p + 1}</button>`;
+			}
+
+			// Ellipsis
+			if (needsEllipsis) {
+				html += `<span class="w-8 h-8 flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm">…</span>`;
+			}
+
+			// Last page
+			if (needsLast) {
+				const isActive = lastPage === currentPage;
+				html += `<button data-go="${lastPage}" class="w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium transition-colors ${isActive ? 'bg-primary-700 text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}">${lastPage + 1}</button>`;
+			}
+
+			// Next arrow
+			html += `<button data-go="${currentPage + 1}" ${currentPage === lastPage ? 'disabled' : ''} class="w-8 h-8 flex items-center justify-center rounded-full text-sm transition-colors ${currentPage === lastPage ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}">&rsaquo;</button>`;
+
+			paginationNav.innerHTML = html;
+		}
+
+		// Delegate clicks on pagination
+		paginationNav.addEventListener('click', (e) => {
+			const btn = e.target.closest('[data-go]');
+			if (!btn || btn.disabled) return;
+			const page = parseInt(btn.getAttribute('data-go'));
+			if (page >= 0 && page < total) {
+				goToPage(page);
+			}
 		});
+
+		// Initial render
+		renderPagination();
 	});
 </script>
