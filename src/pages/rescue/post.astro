@@ -98,11 +98,22 @@ import LayoutSidebar from '../../app/LayoutSidebar.astro';
 						return;
 					}
 					const user = JSON.parse(userStr);
-					if (user.role !== 'provider') {
+					if (user.role !== 'provider' && user.role !== 'school') {
 						window.showToast('Hanya pihak sekolah yang dapat memposting surplus makanan!', 'error');
 						return;
 					}
-// ...
+					const payload = {
+					  provider_id: user.id,
+					  title: document.getElementById('food_type').value,
+					  description: document.getElementById('description').value,
+					  category: document.getElementById('category').value,
+					  quantity_portions: Number(document.getElementById('quantity').value),
+					  pickup_time: document.getElementById('pickup_time').value,
+					  location: document.getElementById('location_name').value,
+					  address: document.getElementById('full_address').value,
+					  latitude: parseFloat(document.getElementById('lat').value),
+					  longitude: parseFloat(document.getElementById('lng').value)
+					};
 					try {
 						const res = await fetch('/api/food', {
 							method: 'POST',
