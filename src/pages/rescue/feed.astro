@@ -13,13 +13,117 @@ try {
 }
 ---
 
-<LayoutSidebar>
+---
+import LayoutSidebar from '../../app/LayoutSidebar.astro';
++
++// Fetch food listings (already done server‑side)
++let availableFood = [];
++try {
++  const response = await fetch(new URL('/api/food', Astro.url));
++  if (response.ok) {
++    availableFood = await response.json();
++  }
++} catch (e) {
++  console.error('Failed to fetch food listings:', e);
++}
++
++// Sort so newest are first (already by created_at desc in API, but ensure client‑side order)
++availableFood.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
++
++// Pagination settings
++const itemsPerPage = 9;
++let currentPage = 0;
++const totalPages = Math.ceil(availableFood.length / itemsPerPage);
++
++// Helper to get current slice
++const getPageItems = () =>
++  availableFood.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+---
 	<div class="px-4 pt-6">
 		<div class="mb-4">
 			<h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Live Feed Rescue MBG</h1>
 		</div>
 
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" id="feed-container">
+		<LayoutSidebar>
+  <div class="px-4 pt-6 pb-12">
+    <div class="mb-4">
+      <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Feed Rescue Makanan Langsung</h1>
+    </div>
+
+    <!-- Tab navigation -->
+    <div class="flex space-x-2 mb-4" id="tab-nav">
+      {Array.from({ length: totalPages }).map((_, i) => (
+        <button
+          class={`px-3 py-1 rounded ${i === currentPage ? 'bg-primary-700 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-200'}`}
+          onClick={() => { currentPage = i; renderPage(); }}
+        >
+          Halaman {i + 1}
+        </button>
+      ))}
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" id="feed-container">
+      <!-- Items will be rendered by renderPage() -->
+    </div>
+  </div>
+</LayoutSidebar>
+
+<script>
+  const foodData = ${JSON.stringify(availableFood)};
+  let currentPage = 0;
+  const itemsPerPage = 9;
+  const totalPages = Math.ceil(foodData.length / itemsPerPage);
+
+  function renderPage() {
+    const container = document.getElementById('feed-container');
+    const slice = foodData.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+    container.innerHTML = slice.map(item => `
+      <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="${item.status === 'available' ? 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' : 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'} text-xs font-medium px-2.5 py-0.5 rounded border">
+              ${item.status.replace('_', ' ').toUpperCase()}
+            </span>
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Batas Waktu: ${item.pickup_time || 'N/A'}</span>
+          </div>
+          <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">${item.school || item.organization || 'Penyedia Tidak Diketahui'}</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">${item.title}</p>
+          <div class="space-y-2 mb-6">
+            <div class="flex items-center text-sm text-gray-500 dark:text-gray-400"><i class="ph-bold ph-package mr-2"></i>${item.quantity_portions || 'N/A'} porsi</div>
+            <div class="flex items-center text-sm text-gray-500 dark:text-gray-400"><i class="ph-bold ph-map-pin mr-2"></i>${item.location || item.address || 'Lokasi tidak ditentukan'}</div>
+          </div>
+        </div>
+        <div class="flex flex-col space-y-2">
+          ${item.status === 'available' ? `<a href="https://www.google.com/maps/search/?api=1&query=${item.latitude},${item.longitude}" target="_blank" class="w-full text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">Buka Peta</a>` : ''}
+          ${item.status === 'available' ? `<button id="reserve-btn-${item.id}" class="hidden w-full text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">Reservasi</button>` : ''}
+          ${item.status === 'reserved' ? `<button id="cancel-btn-${item.id}" class="hidden w-full text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">Batalkan Reservasi</button>` : ''}
+          ${item.status !== 'picked_up' && item.status !== 'completed' ? `<button id="delete-btn-${item.id}" class="hidden w-full text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">Hapus Postingan</button>` : ''}
+          <script define:vars={{ pId: item.provider_id, lId: item.id, cId: item.claimant_id }}>
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (user && user.role === 'receiver') {
+              document.getElementById('reserve-btn-' + lId)?.classList.remove('hidden');
+            }
+            if (user && user.id == pId) {
+              document.getElementById('delete-btn-' + lId)?.classList.remove('hidden');
+            }
+            if (user && user.id == cId) {
+              document.getElementById('cancel-btn-' + lId)?.classList.remove('hidden');
+            }
+          </script>
+        </div>
+      </div>`).join('');
+    // Update tab nav active state
+    const tabs = document.querySelectorAll('#tab-nav button');
+    tabs.forEach((t, i) => {
+      t.className = i === currentPage ? 'px-3 py-1 rounded bg-primary-700 text-white' : 'px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-200';
+    });
+  }
+
+  // Initial render
+  document.addEventListener('DOMContentLoaded', () => {
+    renderPage();
+  });
+</script>
 			{availableFood.length === 0 ? (
 				<p class="text-gray-500 dark:text-gray-400">Tidak ada listing makanan yang tersedia saat ini.</p>
 			) : (
