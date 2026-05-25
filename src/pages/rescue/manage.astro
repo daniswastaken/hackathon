@@ -4,84 +4,101 @@ import { url } from '../../lib/data.js';
 
 let listings = [];
 try {
-  // We'll fetch by provider ID. This assumes we can get it from the session/localStorage
-  // For now, in Astro SSR, we can't easily get localStorage on the server.
-  // We will pass the provider ID via a query param or handle it client-side.
+	// We'll fetch by provider ID. This assumes we can get it from the session/localStorage
+	// For now, in Astro SSR, we can't easily get localStorage on the server.
+	// We will pass the provider ID via a query param or handle it client-side.
 } catch (e) {
-  console.error(e);
+	console.error(e);
 }
 ---
 
 <LayoutSidebar>
-  <div class="px-4 pt-6">
-    <h1 class="text-2xl font-bold mb-4">Manage Your Listings</h1>
-    <div id="listings-container" class="grid gap-4">
-      <!-- Listings will be loaded client-side -->
-      <p>Loading listings...</p>
-    </div>
-  </div>
+	<div class="px-4 pt-6">
+		<h1 class="text-2xl font-bold mb-4">Kelola Listing Anda</h1>
+		<div id="listings-container" class="grid gap-4">
+			<!-- Listings will be loaded client-side -->
+			<p>Memuat listing...</p>
+		</div>
+	</div>
 </LayoutSidebar>
 
 <script>
-  document.addEventListener('DOMContentLoaded', async () => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!user.id) {
-      window.location.href = '/authentication/sign-in';
-      return;
-    }
+	document.addEventListener('DOMContentLoaded', async () => {
+		const user = JSON.parse(localStorage.getItem('user') || '{}');
+		if (!user.id) {
+			window.location.href = '/authentication/sign-in';
+			return;
+		}
 
-    const container = document.getElementById('listings-container');
-    const res = await fetch(`/api/food?providerId=${user.id}`);
-    let data = await res.json();
-    
-    // Only show active (available or reserved) listings in the management view
-    data = data.filter(item => item.status === 'available' || item.status === 'reserved');
+		const container = document.getElementById('listings-container');
+		const res = await fetch(`/api/food?providerId=${user.id}`);
+		let data = await res.json();
 
-    if (data.length === 0) {
-      container.innerHTML = '<p>No listings found.</p>';
-      return;
-    }
+		// Only show active (available or reserved) listings in the management view
+		data = data.filter(
+			(item) => item.status === 'available' || item.status === 'reserved',
+		);
 
-    container.innerHTML = data.map(item => {
-      const displayStatus = item.status.replace('_', ' ').toUpperCase();
-      const isDone = item.status === 'picked_up' || item.status === 'completed';
-      
-      return `
+		if (data.length === 0) {
+			container.innerHTML = '<p>Tidak ada listing ditemukan.</p>';
+			return;
+		}
+
+		container.innerHTML = data
+			.map((item) => {
+				const displayStatus = item.status.replace('_', ' ').toUpperCase();
+				const isDone =
+					item.status === 'picked_up' || item.status === 'completed';
+
+				return `
         <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 flex justify-between items-center">
           <div>
             <h3 class="font-bold dark:text-white">${item.title}</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">${displayStatus} | ${item.quantity_portions} portions</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">${displayStatus} | ${
+					item.quantity_portions
+				} porsi</p>
           </div>
           <div class="flex gap-2">
-            ${!isDone ? `
-               <button onclick="markComplete(${item.id})" class="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium">Done</button>
-               <button onclick="deleteListing(${item.id})" class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium">Delete</button>
-            ` : '<span class="text-green-500 font-bold">COMPLETED</span>'}
+            ${
+							!isDone
+								? `
+               <button onclick="markComplete(${item.id})" class="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium">Selesai</button>
+               <button onclick="deleteListing(${item.id})" class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium">Hapus</button>
+            `
+								: '<span class="text-green-500 font-bold">SELESAI</span>'
+						}
           </div>
         </div>
       `;
-    }).join('');
-  });
+			})
+			.join('');
+	});
 
-  window.markComplete = async (id) => {
-    const res = await fetch('/api/rescue', { method: 'POST', body: JSON.stringify({ action: 'complete', listingId: id }) });
-    if (res.ok) {
-      window.showToast('Rescue marked as complete!', 'success');
-      setTimeout(() => location.reload(), 1000);
-    } else {
-      window.showToast('Failed to mark as complete', 'error');
-    }
-  };
+	window.markComplete = async (id) => {
+		const res = await fetch('/api/rescue', {
+			method: 'POST',
+			body: JSON.stringify({ action: 'complete', listingId: id }),
+		});
+		if (res.ok) {
+			window.showToast('Rescue ditandai selesai!', 'success');
+			setTimeout(() => location.reload(), 1000);
+		} else {
+			window.showToast('Gagal menandai selesai', 'error');
+		}
+	};
 
-  window.deleteListing = async (id) => {
-    if(confirm('Are you sure?')) {
-      const res = await fetch('/api/rescue', { method: 'POST', body: JSON.stringify({ action: 'delete', listingId: id }) });
-      if (res.ok) {
-        window.showToast('Post deleted!', 'success');
-        setTimeout(() => location.reload(), 1000);
-      } else {
-        window.showToast('Failed to delete post', 'error');
-      }
-    }
-  };
+	window.deleteListing = async (id) => {
+		if (confirm('Apakah Anda yakin?')) {
+			const res = await fetch('/api/rescue', {
+				method: 'POST',
+				body: JSON.stringify({ action: 'delete', listingId: id }),
+			});
+			if (res.ok) {
+				window.showToast('Postingan dihapus!', 'success');
+				setTimeout(() => location.reload(), 1000);
+			} else {
+				window.showToast('Gagal menghapus postingan', 'error');
+			}
+		}
+	};
 </script>
