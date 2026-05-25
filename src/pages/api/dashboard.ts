@@ -67,17 +67,26 @@ export const get: APIRoute = async ({ request, locals }) => {
 			.all();
 		const totalVolunteers = totalVolunteersRaw[0]?.total || 0;
 
-		// 6. Chart Data (Last 7 Days) - only completed rescues
+		// 6. Dynamic current date logic based on latest completed claim
+		const { results: maxDateRaw } = await db
+			.prepare("SELECT MAX(date(claimed_at)) as max_date FROM claims WHERE status = 'completed'")
+			.all();
+		const maxDateVal = maxDateRaw[0]?.max_date;
+		const baseDate = maxDateVal ? new Date(maxDateVal + 'T12:00:00Z') : new Date();
+		const baseDateStr = baseDate.toISOString().split('T')[0];
+
+		// Chart Data (Last 7 Days relative to baseDate) - only completed rescues
 		const { results: foodHistoryRaw } = await db
 			.prepare(
 				`
       SELECT date(c.claimed_at) as dt, f.category, SUM(f.quantity_portions) as total 
       FROM food_listings f 
       JOIN claims c ON f.id = c.listing_id 
-      WHERE c.status = 'completed' AND c.claimed_at >= date('now', '-6 days') 
+      WHERE c.status = 'completed' AND c.claimed_at >= date(?, '-6 days') AND c.claimed_at <= date(?, '+1 days')
       GROUP BY dt, f.category
     `,
 			)
+			.bind(baseDateStr, baseDateStr)
 			.all();
 
 		const { results: userHistoryRaw } = await db
@@ -85,10 +94,11 @@ export const get: APIRoute = async ({ request, locals }) => {
 				`
       SELECT date(created_at) as dt, role, COUNT(id) as total 
       FROM users 
-      WHERE created_at >= date('now', '-6 days') 
+      WHERE created_at >= date(?, '-6 days') AND created_at <= date(?, '+1 days')
       GROUP BY dt, role
     `,
 			)
+			.bind(baseDateStr, baseDateStr)
 			.all();
 
 		// Format historical data into 7-day arrays
@@ -100,9 +110,9 @@ export const get: APIRoute = async ({ request, locals }) => {
 			newVolunteers: [] as number[],
 		};
 
-		// Generate last 7 days (including today)
+		// Generate last 7 days relative to baseDate (including today)
 		for (let i = 6; i >= 0; i--) {
-			const d = new Date();
+			const d = new Date(baseDate);
 			d.setDate(d.getDate() - i);
 			const dtStr = d.toISOString().split('T')[0];
 			const displayStr = d.toLocaleDateString('en-GB', {
