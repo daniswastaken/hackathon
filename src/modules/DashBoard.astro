@@ -126,13 +126,13 @@ try {
 			<div class="sm:hidden">
 				<label for="tabs" class="sr-only">Select tab</label>
 				<select id="tabs" class="bg-gray-50 border-0 border-b border-gray-200 text-gray-900 text-sm rounded-t-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-					<option>Top Schools</option>
-					<option>Top Volunteers</option>
+					<option>Top Sekolah</option>
+					<option>Top Penerima</option>
 				</select>
 			</div>
 			<ul class="hidden text-sm font-medium text-center text-gray-500 divide-x divide-gray-200 rounded-lg sm:flex dark:divide-gray-600 dark:text-gray-400" id="fullWidthTab" data-tabs-toggle="#fullWidthTabContent" role="tablist">
-				<li class="w-full"><button id="faq-tab" data-tabs-target="#faq" type="button" role="tab" class="inline-block w-full p-4 rounded-tl-lg bg-gray-50 hover:bg-gray-100 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600">Top Schools</button></li>
-				<li class="w-full"><button id="about-tab" data-tabs-target="#about" type="button" role="tab" class="inline-block w-full p-4 rounded-tr-lg bg-gray-50 hover:bg-gray-100 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600">Top Volunteers</button></li>
+				<li class="w-full"><button id="faq-tab" data-tabs-target="#faq" type="button" role="tab" class="inline-block w-full p-4 rounded-tl-lg bg-gray-50 hover:bg-gray-100 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600">Top Sekolah</button></li>
+				<li class="w-full"><button id="about-tab" data-tabs-target="#about" type="button" role="tab" class="inline-block w-full p-4 rounded-tr-lg bg-gray-50 hover:bg-gray-100 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600">Top Penerima</button></li>
 			</ul>
 			<div id="fullWidthTabContent" class="border-t border-gray-200 dark:border-gray-600">
 				<div class="hidden pt-4" id="faq" role="tabpanel">
@@ -142,13 +142,13 @@ try {
 							<div class="flex items-center justify-between">
 								<div class="flex items-center min-w-0">
 									<div class="flex-shrink-0 w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center dark:bg-primary-900">
-										<img class="w-6 h-6 rounded-full" src={s.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(s.name || s.organization || 'School')}&background=random`} alt="School image" />
+										<img class="w-6 h-6 rounded-full" src={s.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(s.name || s.organization || 'Sekolah')}&background=random`} alt="School image" />
 									</div>
 									<div class="ml-3">
-										<p class="font-medium text-gray-900 truncate dark:text-white">{s.name || s.organization || 'School'}</p>
+										<p class="font-medium text-gray-900 truncate dark:text-white">{s.name || s.organization || 'Sekolah'}</p>
 									</div>
 								</div>
-								<div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">{s.total_rescued || 0} portions</div>
+								<div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">{s.total_rescued || 0} porsi</div>
 							</div>
 						</li>
 						))}
@@ -161,7 +161,7 @@ try {
 							<div class="flex items-center space-x-4">
 								<div class="flex-shrink-0"><img class="w-8 h-8 rounded-full" src={v.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(v.name || v.email || 'User')}&background=random`} alt="Volunteer image" /></div>
 								<div class="flex-1 min-w-0">
-									<p class="font-medium text-gray-900 truncate dark:text-white">{v.name || 'Volunteer'}</p>
+									<p class="font-medium text-gray-900 truncate dark:text-white">{v.name || 'Penerima'}</p>
 									<p class="text-sm text-gray-500 truncate dark:text-gray-400">{v.email}</p>
 								</div>
 								<div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">{v.points || 0} pts</div>
@@ -182,20 +182,20 @@ try {
 	<div class="grid w-full grid-cols-1 gap-4 mt-4 xl:grid-cols-2 2xl:grid-cols-3 pb-10">
 		<div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 			<div class="w-full">
-				<h3 class="text-base font-normal text-gray-500 dark:text-gray-400">Active Schools</h3>
+				<h3 class="text-base font-normal text-gray-500 dark:text-gray-400">Sekolah Aktif</h3>
 				<span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">{dashData.activeSchools}</span>
 				<p class="flex items-center text-base font-normal text-gray-500 dark:text-gray-400">
-					All registered schools
+					Semua sekolah terdaftar
 				</p>
 			</div>
 			<div class="w-full" id="new-products-chart"></div>
 		</div>
 		<div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 			<div class="w-full">
-				<h3 class="text-base font-normal text-gray-500 dark:text-gray-400">Rescue Volunteers</h3>
+				<h3 class="text-base font-normal text-gray-500 dark:text-gray-400">Penerima Aktif</h3>
 				<span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">{dashData.totalVolunteers}</span>
 				<p class="flex items-center text-base font-normal text-gray-500 dark:text-gray-400">
-					All registered receivers
+					Semua penerima terdaftar
 				</p>
 			</div>
 			<div class="w-full" id="week-signups-chart"></div>

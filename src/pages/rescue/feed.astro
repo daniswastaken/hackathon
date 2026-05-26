@@ -12,10 +12,13 @@ try {
 	console.error('Failed to fetch food listings:', e);
 }
 
-// Sort: available first, then by newest
+// Sort: reserved first, then available, then by newest
 availableFood.sort((a: any, b: any) => {
-	if (a.status === 'available' && b.status !== 'available') return -1;
-	if (a.status !== 'available' && b.status === 'available') return 1;
+	const statusOrder: Record<string, number> = { 'reserved': 0, 'available': 1 };
+	const aOrder = statusOrder[a.status] ?? 2;
+	const bOrder = statusOrder[b.status] ?? 2;
+
+	if (aOrder !== bOrder) return aOrder - bOrder;
 	return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
 });
 

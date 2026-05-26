@@ -71,12 +71,12 @@ const getMainChartOptions = () => {
 		},
 		series: [
 			{
-				name: 'Consumable',
+				name: 'Konsumsi',
 				data: chartData.consumable,
 				color: '#10B981',
 			},
 			{
-				name: 'Farm/Fertilizer',
+				name: 'Pakan Ternak',
 				data: chartData.farm,
 				color: '#F59E0B',
 			},
@@ -122,7 +122,7 @@ const getMainChartOptions = () => {
 					fontWeight: 500,
 				},
 				formatter(value) {
-					return `${value} portions`;
+					return `${value} porsi`;
 				},
 			},
 		},

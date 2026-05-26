@@ -58,6 +58,15 @@ import { url } from '../lib/data.js';
 							<span class="ml-3">Kelola Listing</span>
 						</a>
 					</li>
+					<script is:inline>
+						(function() {
+							const user = JSON.parse(localStorage.getItem('user') || '{}');
+							if (user.role === 'provider') {
+								document.getElementById('post-surplus-item')?.classList.remove('hidden');
+								document.getElementById('manage-listings-item')?.classList.remove('hidden');
+							}
+						})();
+					</script>
 				</ul>
 			</div>
 		</div>
@@ -114,12 +123,6 @@ import { url } from '../lib/data.js';
 
 <script>
 	document.addEventListener('DOMContentLoaded', () => {
-		const user = JSON.parse(localStorage.getItem('user') || '{}');
-		if (user.role === 'provider') {
-			document.getElementById('post-surplus-item')?.classList.remove('hidden');
-			document.getElementById('manage-listings-item')?.classList.remove('hidden');
-		}
-
 		const currentPath = window.location.pathname;
 		const navLinks = document.querySelectorAll('#sidebar-nav a');
 		

@@ -16,6 +16,12 @@ export const post: APIRoute = async ({ request, locals }) => {
       return new Response(JSON.stringify({ error: 'Missing listingId or userId' }), { status: 400 });
     }
 
+    // Check if already reserved
+    const existing = await db.prepare('SELECT id FROM claims WHERE listing_id = ?').bind(listingId).first();
+    if (existing) {
+      return new Response(JSON.stringify({ error: 'Food already reserved' }), { status: 400 });
+    }
+
     // Create a claim entry
     await db.prepare('INSERT INTO claims (listing_id, receiver_id, status) VALUES (?, ?, "pending")')
       .bind(listingId, userId).run();

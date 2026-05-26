@@ -17,10 +17,9 @@ export const get: APIRoute = async ({ request, locals }) => {
 		const { results: totalRescuedRaw } = await db
 			.prepare(
 				`
-      SELECT SUM(f.quantity_portions) as total 
-      FROM food_listings f 
-      JOIN claims c ON f.id = c.listing_id 
-      WHERE c.status = 'completed'
+      SELECT SUM(quantity_portions) as total 
+      FROM food_listings 
+      WHERE id IN (SELECT listing_id FROM claims WHERE status = 'completed')
     `,
 			)
 			.all();
@@ -33,8 +32,8 @@ export const get: APIRoute = async ({ request, locals }) => {
       SELECT u.id, u.name, u.organization, SUM(f.quantity_portions) as total_rescued
       FROM users u
       JOIN food_listings f ON u.id = f.provider_id
-      JOIN claims c ON f.id = c.listing_id
-      WHERE u.role = 'provider' AND c.status = 'completed'
+      WHERE u.role = 'provider' 
+        AND f.id IN (SELECT listing_id FROM claims WHERE status = 'completed')
       GROUP BY u.id
       ORDER BY total_rescued DESC
       LIMIT 5

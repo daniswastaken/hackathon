@@ -11,10 +11,10 @@ export const get: APIRoute = async ({ request, url, locals }) => {
     }
 
     let sql = `
-      SELECT f.*, u.name as school, u.organization, c.receiver_id as claimant_id
+      SELECT f.*, u.name as school, u.organization,
+      (SELECT receiver_id FROM claims WHERE listing_id = f.id ORDER BY id DESC LIMIT 1) as claimant_id
       FROM food_listings f
       JOIN users u ON f.provider_id = u.id
-      LEFT JOIN claims c ON f.id = c.listing_id
     `;
     let params: any[] = [];
     if (providerId) {
