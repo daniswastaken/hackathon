@@ -173,7 +173,7 @@ if (document.getElementById('new-products-chart')) {
 		colors: ['#1A56DB', '#FDBA8C'],
 		series: [
 			{
-				name: 'Quantity',
+				name: 'Sekolah',
 				color: '#1A56DB',
 				data: formattedData,
 			},
@@ -468,7 +468,7 @@ const getSignupsChartOptions = () => {
 	return {
 		series: [
 			{
-				name: 'Users',
+				name: 'Pengguna',
 				data: chartData.newVolunteers,
 			},
 		],
