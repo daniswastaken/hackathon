@@ -5,7 +5,6 @@ import { asset } from '../lib/data.js';
 import mbgLogo from '../assets/mbg-rn.svg';
 
 import ColorModeSwitcher from '../components/ColorModeSwitcher.astro';
-import SearchInput from '../components/SearchInput.astro';
 ---
 
 <nav
@@ -37,21 +36,9 @@ import SearchInput from '../components/SearchInput.astro';
 					>
 
 				</a>
-
-				<SearchInput />
 			</div>
 
 			<div class="flex items-center">
-				<!-- Search mobile -->
-				<button
-					id="toggleSidebarMobileSearch"
-					type="button"
-					class="p-2 text-gray-500 rounded-lg lg:hidden hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-				>
-					<span class="sr-only">Search</span>
-					<i class="ph-bold ph-magnifying-glass text-2xl"></i>
-				</button>
-
 				<ColorModeSwitcher />
 
 				<!-- Profile -->
