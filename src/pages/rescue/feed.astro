@@ -60,6 +60,12 @@ const totalPages = Math.max(1, Math.ceil(availableFood.length / itemsPerPage));
 										<i class="ph-bold ph-map-pin mr-2"></i>
 										{item.location || item.address || 'Lokasi tidak ditentukan'}
 									</div>
+									{item.description && (
+										<div class="flex items-start text-sm text-gray-500 dark:text-gray-400 mt-2">
+											<i class="ph-bold ph-info mr-2 mt-0.5"></i>
+											<span>{item.description}</span>
+										</div>
+									)}
 								</div>
 							</div>
 
