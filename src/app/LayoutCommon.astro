@@ -17,7 +17,21 @@ const { class: clazz } = Astro.props;
 
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={pkg.description} />
-		<meta name="" content={pkg.description} />
+		
+		<!-- OpenGraph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={Astro.url} />
+		<meta property="og:title" content={SITE_TITLE} />
+		<meta property="og:description" content={pkg.description} />
+		<meta property="og:image" content={url('og.jpg')} />
+
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:url" content={Astro.url} />
+		<meta property="twitter:title" content={SITE_TITLE} />
+		<meta property="twitter:description" content={pkg.description} />
+		<meta property="twitter:image" content={url('og.jpg')} />
+
 		<link rel="icon" type="image/svg+xml" href={mbgLogo} />
 		<link
 			rel="sitemap"
@@ -27,7 +41,7 @@ const { class: clazz } = Astro.props;
 
 		<meta
 			name="author"
-			content="Julian Cataldo, Zoltán Szőgyényi, Robert Tanislav"
+			content="MBG Rescue Network Team"
 		/>
 		<meta name="copyright" content="MIT" />
 
